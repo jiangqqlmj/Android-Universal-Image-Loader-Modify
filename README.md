@@ -1,3 +1,17 @@
+#<a href="http://blog.csdn.net/developer_jiangqq">关于本人</a>
+邮箱:jiangqqlmj@163.com</br>
+本人微信/QQ:781931404</br>
+Android技术部落群:173711587</br>
+Android菜鸟新闻实战项目群:99787482</br>
+<img src="http://img.blog.csdn.net/20151121085753187"/></br>
+Android开发群1:107086751</br>
+Android开发群3:109244103</br>
+#关于本项目:
+本项目为Android-Universal-Image-Loader(UIL)项目的修改版本,从原作者项目库中复制而来,这边先感谢一下原作者们的分享精神!向致力于开源项目的朋友致敬!
+该项目在原项目的基础上面进行修改注释了相关核心类和方法，同时对于原库进行工具扩展!由于项目中基本上已经加入了很多中文注释，所以就没有采用fork-pull request方式!
+就直接把修改版本也全部开源给大家了~后面关于该库的源码原理分析相关文章会同步更新!
+
+#原项目信息如下:
 # ![Logo](https://github.com/nostra13/Android-Universal-Image-Loader/raw/master/sample/src/main/res/drawable-mdpi/ic_launcher.png) Universal Image Loader [![Build Status](https://travis-ci.org/nostra13/Android-Universal-Image-Loader.svg?branch=master)](https://travis-ci.org/nostra13/Android-Universal-Image-Loader) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.nostra13.universalimageloader/universal-image-loader/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.nostra13.universalimageloader/universal-image-loader)
 
 Android library **[#1](https://www.gitrep.com/search?utf8=✓&omni_search=&public_tags%5B%5D=android&description=&search=true&sort=star_count&commit=Search)** on GitHub.
