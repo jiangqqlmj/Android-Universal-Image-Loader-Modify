@@ -23,6 +23,7 @@ import com.nostra13.universalimageloader.core.imageaware.ImageAware;
 import com.nostra13.universalimageloader.core.imageaware.ImageViewAware;
 
 /**
+ * 给显示的图片加入圆角然后显示在控件上面
  * Can display bitmap with rounded corners. This implementation works only with ImageViews wrapped
  * in ImageViewAware.
  * <br />
@@ -43,10 +44,19 @@ public class RoundedBitmapDisplayer implements BitmapDisplayer {
 	protected final int cornerRadius;
 	protected final int margin;
 
+	/**
+	 * 圆角图片生成器构造方法
+	 * @param cornerRadiusPixels 圆角大小
+	 */
 	public RoundedBitmapDisplayer(int cornerRadiusPixels) {
 		this(cornerRadiusPixels, 0);
 	}
 
+	/**
+	 * 圆角图片生成器构造方法
+	 * @param cornerRadiusPixels 圆角大小
+	 * @param marginPixels   上下左右的间距margin值
+	 */
 	public RoundedBitmapDisplayer(int cornerRadiusPixels, int marginPixels) {
 		this.cornerRadius = cornerRadiusPixels;
 		this.margin = marginPixels;
@@ -61,6 +71,9 @@ public class RoundedBitmapDisplayer implements BitmapDisplayer {
 		imageAware.setImageDrawable(new RoundedDrawable(bitmap, cornerRadius, margin));
 	}
 
+	/**
+	 * 进行绘制圆角图片
+	 */
 	public static class RoundedDrawable extends Drawable {
 
 		protected final float cornerRadius;
