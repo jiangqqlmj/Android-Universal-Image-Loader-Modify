@@ -20,6 +20,7 @@ import com.nostra13.universalimageloader.core.assist.LoadedFrom;
 import com.nostra13.universalimageloader.core.imageaware.ImageAware;
 
 /**
+ * 简化的图片显示器 就直接显示图片即可
  * Just displays {@link Bitmap} in {@link com.nostra13.universalimageloader.core.imageaware.ImageAware}
  *
  * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)

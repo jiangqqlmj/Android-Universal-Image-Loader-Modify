@@ -20,6 +20,7 @@ import com.nostra13.universalimageloader.core.assist.LoadedFrom;
 import com.nostra13.universalimageloader.core.imageaware.ImageAware;
 
 /**
+ * 图片显示器 这边只是定义了显示器接口  公告接口
  * Displays {@link Bitmap} in {@link com.nostra13.universalimageloader.core.imageaware.ImageAware}. Implementations can
  * apply some changes to Bitmap or any animation for displaying Bitmap.<br />
  * Implementations have to be thread-safe.
@@ -31,6 +32,7 @@ import com.nostra13.universalimageloader.core.imageaware.ImageAware;
  */
 public interface BitmapDisplayer {
 	/**
+	 * 在IamgeAware中进行显示bitmap图片资源，该方法会在主UI线程中调用,所以不推荐在内部执行耗时任务
 	 * Displays bitmap in {@link com.nostra13.universalimageloader.core.imageaware.ImageAware}.
 	 * <b>NOTE:</b> This method is called on UI thread so it's strongly recommended not to do any heavy work in it.
 	 *

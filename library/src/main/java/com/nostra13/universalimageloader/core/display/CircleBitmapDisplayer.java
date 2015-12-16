@@ -32,6 +32,7 @@ import com.nostra13.universalimageloader.core.imageaware.ImageAware;
 import com.nostra13.universalimageloader.core.imageaware.ImageViewAware;
 
 /**
+ * 加载的图片进行裁剪成圆形(加入圆边颜色以及圆边的宽度)，然后进行显示
  * Can display bitmap cropped by a circle. This implementation works only with ImageViews wrapped
  * in ImageViewAware.
  * <br />

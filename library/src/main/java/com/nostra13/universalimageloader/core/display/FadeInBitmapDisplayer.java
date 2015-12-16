@@ -24,6 +24,7 @@ import com.nostra13.universalimageloader.core.assist.LoadedFrom;
 import com.nostra13.universalimageloader.core.imageaware.ImageAware;
 
 /**
+ * 显示图片的时候 加入 图片加载的动画。
  * Displays image with "fade in" animation
  *
  * @author Sergey Tarasevich (nostra13[at]gmail[dot]com), Daniel Martí
@@ -33,11 +34,15 @@ public class FadeInBitmapDisplayer implements BitmapDisplayer {
 
 	private final int durationMillis;
 
+	//从网络加载的图片 加入动画
 	private final boolean animateFromNetwork;
+	//从本地缓存中加载的图片 加入动画
 	private final boolean animateFromDisk;
+	//从内存中加载的图片 加入动画
 	private final boolean animateFromMemory;
 
 	/**
+	 * 加入图片显示动画的构造器
 	 * @param durationMillis Duration of "fade-in" animation (in milliseconds)
 	 */
 	public FadeInBitmapDisplayer(int durationMillis) {
@@ -58,6 +63,13 @@ public class FadeInBitmapDisplayer implements BitmapDisplayer {
 		this.animateFromMemory = animateFromMemory;
 	}
 
+	/**
+	 * 图片进行显示在ImageAware中
+	 * @param bitmap     原图片
+	 * @param imageAware 显示进行显示图片的控件 {@linkplain com.nostra13.universalimageloader.core.imageaware.ImageAware Image aware view} to
+	 *                   display Bitmap
+	 * @param loadedFrom Source of loaded image   图片来源方式
+	 */
 	@Override
 	public void display(Bitmap bitmap, ImageAware imageAware, LoadedFrom loadedFrom) {
 		imageAware.setImageBitmap(bitmap);
@@ -70,6 +82,7 @@ public class FadeInBitmapDisplayer implements BitmapDisplayer {
 	}
 
 	/**
+	 * fade-in(显示) 效果动画
 	 * Animates {@link ImageView} with "fade-in" effect
 	 *
 	 * @param imageView      {@link ImageView} which display image in
