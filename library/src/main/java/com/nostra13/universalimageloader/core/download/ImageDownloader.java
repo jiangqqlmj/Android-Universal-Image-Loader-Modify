@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.util.Locale;
 
 /**
+ * 根据图片的URL进行下载 获取图片流。
  * Provides retrieving of {@link InputStream} of image by URI.<br />
  * Implementations have to be thread-safe.
  *
@@ -30,6 +31,7 @@ import java.util.Locale;
  */
 public interface ImageDownloader {
 	/**
+	 * 根据图片地址和类型进行获取图图片的流数据，改为接口中定义的方法,让实现类具体实现即可
 	 * Retrieves {@link InputStream} of image by URI.
 	 *
 	 * @param imageUri Image URI
@@ -54,6 +56,8 @@ public interface ImageDownloader {
 		}
 
 		/**
+		 *
+		 * 根据地址来获取文件的来源类型
 		 * Defines scheme of incoming URI
 		 *
 		 * @param uri URI for scheme detection
@@ -70,6 +74,11 @@ public interface ImageDownloader {
 			return UNKNOWN;
 		}
 
+		/**
+		 * 字符串匹配
+		 * @param uri
+		 * @return
+		 */
 		private boolean belongsTo(String uri) {
 			return uri.toLowerCase(Locale.US).startsWith(uriPrefix);
 		}

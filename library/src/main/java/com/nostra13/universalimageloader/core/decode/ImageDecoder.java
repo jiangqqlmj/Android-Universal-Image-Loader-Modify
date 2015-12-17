@@ -20,6 +20,7 @@ import android.graphics.Bitmap;
 import java.io.IOException;
 
 /**
+ * 提供图像解码
  * Provide decoding image to result {@link Bitmap}.
  *
  * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)
