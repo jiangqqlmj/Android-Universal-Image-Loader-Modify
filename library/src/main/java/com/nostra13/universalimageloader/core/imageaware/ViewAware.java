@@ -27,6 +27,7 @@ import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 
 /**
+ * 改为Android View的包装类，采用弱引用视图，来防止内存溢出
  * Wrapper for Android {@link android.view.View View}. Keeps weak reference of View to prevent memory leaks.
  *
  * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)
@@ -37,10 +38,12 @@ public abstract class ViewAware implements ImageAware {
 	public static final String WARN_CANT_SET_DRAWABLE = "Can't set a drawable into view. You should call ImageLoader on UI thread for it.";
 	public static final String WARN_CANT_SET_BITMAP = "Can't set a bitmap into view. You should call ImageLoader on UI thread for it.";
 
+	//存放View视图
 	protected Reference<View> viewRef;
 	protected boolean checkActualViewSize;
 
 	/**
+	 * ViewAware 构造器
 	 * Constructor. <br />
 	 * References {@link #ViewAware(android.view.View, boolean) ImageViewAware(imageView, true)}.
 	 *
@@ -68,7 +71,7 @@ public abstract class ViewAware implements ImageAware {
 	 */
 	public ViewAware(View view, boolean checkActualViewSize) {
 		if (view == null) throw new IllegalArgumentException("view must not be null");
-
+        //把当前的View对象采用弱引用方式
 		this.viewRef = new WeakReference<View>(view);
 		this.checkActualViewSize = checkActualViewSize;
 	}
@@ -181,12 +184,14 @@ public abstract class ViewAware implements ImageAware {
 	}
 
 	/**
+	 * 给传入的View进行设置drawable，传入的view要确保非空
 	 * Should set drawable into incoming view. Incoming view is guaranteed not null.<br />
 	 * This method is called on UI thread.
 	 */
 	protected abstract void setImageDrawableInto(Drawable drawable, View view);
 
 	/**
+	 * 给传入的View进行设置bitmap，传入的view要确保非空
 	 * Should set Bitmap into incoming view. Incoming view is guaranteed not null.< br />
 	 * This method is called on UI thread.
 	 */
