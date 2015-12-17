@@ -21,6 +21,7 @@ import android.view.View;
 import com.nostra13.universalimageloader.core.assist.ViewScaleType;
 
 /**
+ * ImageView包装统一接口，其中封装提供用于图片处理和显示所有需要的属性和方法
  * Represents image aware view which provides all needed properties and behavior for image processing and displaying
  * through {@link com.nostra13.universalimageloader.core.ImageLoader ImageLoader}.
  * It can wrap any Android {@link android.view.View View} which can be accessed by {@link #getWrappedView()}. Wrapped
@@ -35,6 +36,7 @@ import com.nostra13.universalimageloader.core.assist.ViewScaleType;
  */
 public interface ImageAware {
 	/**
+	 * 返回图片的宽度，改为原始图片尺寸
 	 * Returns width of image aware view. This value is used to define scale size for original image.
 	 * Can return 0 if width is undefined.<br />
 	 * Is called on UI thread if ImageLoader was called on UI thread. Otherwise - on background thread.
@@ -42,6 +44,7 @@ public interface ImageAware {
 	int getWidth();
 
 	/**
+	 * 返回图片的高度，改为原始图片尺寸
 	 * Returns height of image aware view. This value is used to define scale size for original image.
 	 * Can return 0 if height is undefined.<br />
 	 * Is called on UI thread if ImageLoader was called on UI thread. Otherwise - on background thread.
@@ -55,6 +58,7 @@ public interface ImageAware {
 	ViewScaleType getScaleType();
 
 	/**
+	 * 返回被包装的View
 	 * Returns wrapped Android {@link android.view.View View}. Can return <b>null</b> if no view is wrapped or view was
 	 * collected by GC.<br />
 	 * Is called on UI thread if ImageLoader was called on UI thread. Otherwise - on background thread.
@@ -74,6 +78,7 @@ public interface ImageAware {
 	boolean isCollected();
 
 	/**
+	 * 返回图片控件的ID
 	 * Returns ID of image aware view. Point of ID is similar to Object's hashCode. This ID should be unique for every
 	 * image view instance and should be the same for same instances. This ID identifies processing task in ImageLoader
 	 * so ImageLoader won't process two image aware views with the same ID in one time. When ImageLoader get new task
@@ -85,6 +90,7 @@ public interface ImageAware {
 	int getId();
 
 	/**
+	 * 给图片控件设置drawable
 	 * Sets image drawable into this image aware view.<br />
 	 * Displays drawable in this image aware view
 	 * {@linkplain com.nostra13.universalimageloader.core.DisplayImageOptions.Builder#showImageForEmptyUri(
@@ -102,6 +108,7 @@ public interface ImageAware {
 	boolean setImageDrawable(Drawable drawable);
 
 	/**
+	 * 给图片控件设置bitmap
 	 * Sets image bitmap into this image aware view.<br />
 	 * Displays loaded and decoded image {@link android.graphics.Bitmap} in this image view aware.
 	 * Actually it's used only in
