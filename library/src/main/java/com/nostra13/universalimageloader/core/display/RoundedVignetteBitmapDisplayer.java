@@ -21,6 +21,8 @@ import com.nostra13.universalimageloader.core.imageaware.ImageAware;
 import com.nostra13.universalimageloader.core.imageaware.ImageViewAware;
 
 /**
+ *
+ * 创建圆角图片以vignette装饰效果.该效果只能在使用ImageViewAware包装过的ImageView中
  * Can display bitmap with rounded corners and vignette effect. This implementation works only with ImageViews wrapped
  * in ImageViewAware.
  * <br />
@@ -37,10 +39,21 @@ import com.nostra13.universalimageloader.core.imageaware.ImageViewAware;
  */
 public class RoundedVignetteBitmapDisplayer extends RoundedBitmapDisplayer {
 
+	/**
+	 * 构造函数
+	 * @param cornerRadiusPixels 圆角的大小
+	 * @param marginPixels    四周的边距
+	 */
 	public RoundedVignetteBitmapDisplayer(int cornerRadiusPixels, int marginPixels) {
 		super(cornerRadiusPixels, marginPixels);
 	}
 
+	/**
+	 * 进行创建合适的圆角进行显示
+	 * @param bitmap
+	 * @param imageAware
+	 * @param loadedFrom
+	 */
 	@Override
 	public void display(Bitmap bitmap, ImageAware imageAware, LoadedFrom loadedFrom) {
 		if (!(imageAware instanceof ImageViewAware)) {
@@ -56,6 +69,10 @@ public class RoundedVignetteBitmapDisplayer extends RoundedBitmapDisplayer {
 			super(bitmap, cornerRadius, margin);
 		}
 
+		/**
+		 *
+		 * @param bounds
+		 */
 		@Override
 		protected void onBoundsChange(Rect bounds) {
 			super.onBoundsChange(bounds);

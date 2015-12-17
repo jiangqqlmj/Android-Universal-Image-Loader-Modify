@@ -34,6 +34,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.display.CircleBitmapDisplayer;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
+import com.nostra13.universalimageloader.core.display.RoundedVignetteBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.nostra13.universalimageloader.sample.Constants;
@@ -89,7 +90,7 @@ public class ImageListFragment extends AbsListViewBaseFragment {
 					.cacheInMemory(true)
 					.cacheOnDisk(true)
 					.considerExifParams(true)
-					.displayer(new RoundedBitmapDisplayer(20))
+					.displayer(new RoundedVignetteBitmapDisplayer(20,10))
 					.build();
 		}
 
