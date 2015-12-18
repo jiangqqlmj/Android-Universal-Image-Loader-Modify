@@ -22,6 +22,7 @@ import android.widget.ListView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 /**
+ * 对于ListView或者GridView而言，监听该类控件的滚动事件，然后当滚动的时候来暂停ImageLoader图片的加载
  * Listener-helper for {@linkplain AbsListView list views} ({@link ListView}, {@link GridView}) which can
  * {@linkplain ImageLoader#pause() pause ImageLoader's tasks} while list view is scrolling (touch scrolling and/or
  * fling). It prevents redundant loadings.<br />
@@ -40,7 +41,7 @@ public class PauseOnScrollListener implements OnScrollListener {
 	private final OnScrollListener externalListener;
 
 	/**
-	 * Constructor
+	 * Constructor  构造方式
 	 *
 	 * @param imageLoader   {@linkplain ImageLoader} instance for controlling
 	 * @param pauseOnScroll Whether {@linkplain ImageLoader#pause() pause ImageLoader} during touch scrolling
@@ -67,6 +68,12 @@ public class PauseOnScrollListener implements OnScrollListener {
 		externalListener = customListener;
 	}
 
+	/**
+	 * 当View在进行滚动的时候，回调的onScrollStateChanged方法，在其中根据滚动的事件相关类型判断，
+	 * 暂停和开启ImageLoader加载图片
+	 * @param view
+	 * @param scrollState
+	 */
 	@Override
 	public void onScrollStateChanged(AbsListView view, int scrollState) {
 		switch (scrollState) {
@@ -89,6 +96,13 @@ public class PauseOnScrollListener implements OnScrollListener {
 		}
 	}
 
+	/**
+	 * onScroll 参数传入
+	 * @param view
+	 * @param firstVisibleItem
+	 * @param visibleItemCount
+	 * @param totalItemCount
+	 */
 	@Override
 	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 		if (externalListener != null) {
