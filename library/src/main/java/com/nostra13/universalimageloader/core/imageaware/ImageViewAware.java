@@ -76,6 +76,7 @@ public class ImageViewAware extends ViewAware {
 		if (width <= 0) {
 			ImageView imageView = (ImageView) viewRef.get();
 			if (imageView != null) {
+				//获取ImageView中的最大宽度
 				width = getImageViewFieldValue(imageView, "mMaxWidth"); // Check maxWidth parameter
 			}
 		}
@@ -93,12 +94,17 @@ public class ImageViewAware extends ViewAware {
 		if (height <= 0) {
 			ImageView imageView = (ImageView) viewRef.get();
 			if (imageView != null) {
+				//获取ImageView的最大高度
 				height = getImageViewFieldValue(imageView, "mMaxHeight"); // Check maxHeight parameter
 			}
 		}
 		return height;
 	}
 
+	/**
+	 * 获取ImageView的缩放scale类型方式
+	 * @return
+	 */
 	@Override
 	public ViewScaleType getScaleType() {
 		ImageView imageView = (ImageView) viewRef.get();
@@ -136,6 +142,12 @@ public class ImageViewAware extends ViewAware {
 		((ImageView) view).setImageBitmap(bitmap);
 	}
 
+	/**
+	 * 通过反射方式来获取ImageView的最大宽度
+	 * @param object
+	 * @param fieldName
+	 * @return
+	 */
 	private static int getImageViewFieldValue(Object object, String fieldName) {
 		int value = 0;
 		try {
