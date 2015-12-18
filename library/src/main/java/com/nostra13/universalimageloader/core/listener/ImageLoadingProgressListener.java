@@ -18,6 +18,7 @@ package com.nostra13.universalimageloader.core.listener;
 import android.view.View;
 
 /**
+ * 图片加载(下载)进度回调
  * Listener for image loading progress.
  *
  * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)
@@ -26,12 +27,13 @@ import android.view.View;
 public interface ImageLoadingProgressListener {
 
 	/**
+	 * 当图片下载进度发生变化的时候进行回调
 	 * Is called when image loading progress changed.
 	 *
-	 * @param imageUri Image URI
-	 * @param view     View for image. Can be <b>null</b>.
-	 * @param current  Downloaded size in bytes
-	 * @param total    Total size in bytes
+	 * @param imageUri Image URI             图片的URL地址
+	 * @param view     View for image. Can be <b>null</b>.   显示图片的控件View
+	 * @param current  Downloaded size in bytes       图片已经下载的大小
+	 * @param total    Total size in bytes            图片总共的大小
 	 */
 	void onProgressUpdate(String imageUri, View view, int current, int total);
 }
