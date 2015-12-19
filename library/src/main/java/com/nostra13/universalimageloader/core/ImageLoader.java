@@ -40,6 +40,7 @@ import com.nostra13.universalimageloader.utils.L;
 import com.nostra13.universalimageloader.utils.MemoryCacheUtils;
 
 /**
+ * Image加载和显示的单例类
  * Singletone for image loading and displaying at {@link ImageView ImageViews}<br />
  * <b>NOTE:</b> {@link #init(ImageLoaderConfiguration)} method must be called before any other method.
  *
@@ -59,11 +60,13 @@ public class ImageLoader {
 	private static final String ERROR_NOT_INIT = "ImageLoader must be init with configuration before using";
 	private static final String ERROR_INIT_CONFIG_WITH_NULL = "ImageLoader configuration can not be initialized with null";
 
+	//ImageLoader配置项
 	private ImageLoaderConfiguration configuration;
+	//ImageLoader加载任务引擎
 	private ImageLoaderEngine engine;
-
+    //图片加载监听器   默认采用SimpleImageLoadingListener
 	private ImageLoadingListener defaultListener = new SimpleImageLoadingListener();
-
+    //采用volatile  这边修饰被不同线程访问和修改的变量
 	private volatile static ImageLoader instance;
 
 	/** Returns singleton class instance */
@@ -82,6 +85,7 @@ public class ImageLoader {
 	}
 
 	/**
+	 * 给ImageLoder进行初始化配置项
 	 * Initializes ImageLoader instance with configuration.<br />
 	 * If configurations was set before ( {@link #isInited()} == true) then this method does nothing.<br />
 	 * To force initialization with new configuration you should {@linkplain #destroy() destroy ImageLoader} at first.
@@ -95,6 +99,7 @@ public class ImageLoader {
 		}
 		if (this.configuration == null) {
 			L.d(LOG_INIT_CONFIG);
+			//创建图片加载引擎
 			engine = new ImageLoaderEngine(configuration);
 			this.configuration = configuration;
 		} else {
@@ -103,6 +108,7 @@ public class ImageLoader {
 	}
 
 	/**
+	 * 判断当前ImageLoderConfiguration是否已经被初始化
 	 * Returns <b>true</b> - if ImageLoader {@linkplain #init(ImageLoaderConfiguration) is initialized with
 	 * configuration}; <b>false</b> - otherwise
 	 */
@@ -111,7 +117,7 @@ public class ImageLoader {
 	}
 
 	/**
-	 *
+	 * 添加图片加载显示任务到执行线程池中，这边显示图片ImageView控件被包装成ImageAware对象
 	 * Adds display image task to execution pool. Image will be set to ImageAware when it's turn. <br/>
 	 * Default {@linkplain DisplayImageOptions display image options} from {@linkplain ImageLoaderConfiguration
 	 * configuration} will be used.<br />
@@ -123,11 +129,17 @@ public class ImageLoader {
 	 * @throws IllegalStateException    if {@link #init(ImageLoaderConfiguration)} method wasn't called before
 	 * @throws IllegalArgumentException if passed <b>imageAware</b> is null
 	 */
+	/**
+	 *
+	 * @param uri           图片URL地址
+	 * @param imageAware    ImageView包装成ImageAware
+	 */
 	public void displayImage(String uri, ImageAware imageAware) {
 		displayImage(uri, imageAware, null, null, null);
 	}
 
 	/**
+	 * 添加图片加载显示任务到执行线程池中，这边显示图片ImageView控件被包装成ImageAware对象
 	 * Adds display image task to execution pool. Image will be set to ImageAware when it's turn.<br />
 	 * Default {@linkplain DisplayImageOptions display image options} from {@linkplain ImageLoaderConfiguration
 	 * configuration} will be used.<br />
@@ -141,11 +153,18 @@ public class ImageLoader {
 	 * @throws IllegalStateException    if {@link #init(ImageLoaderConfiguration)} method wasn't called before
 	 * @throws IllegalArgumentException if passed <b>imageAware</b> is null
 	 */
+	/**
+	 *
+	 * @param uri          图片URL地址
+	 * @param imageAware   ImageView包装成ImageAware
+	 * @param listener     图片加载进度监听器
+	 */
 	public void displayImage(String uri, ImageAware imageAware, ImageLoadingListener listener) {
 		displayImage(uri, imageAware, null, listener, null);
 	}
 
 	/**
+	 * 添加图片加载显示任务到执行线程池中，这边显示图片ImageView控件被包装成ImageAware对象
 	 * Adds display image task to execution pool. Image will be set to ImageAware when it's turn.<br />
 	 * <b>NOTE:</b> {@link #init(ImageLoaderConfiguration)} method must be called before this method call
 	 *
@@ -159,11 +178,18 @@ public class ImageLoader {
 	 * @throws IllegalStateException    if {@link #init(ImageLoaderConfiguration)} method wasn't called before
 	 * @throws IllegalArgumentException if passed <b>imageAware</b> is null
 	 */
+	/**
+	 *
+	 * @param uri          图片URL地址
+	 * @param imageAware   ImageView包装成ImageAware
+	 * @param options      图片显示参数配置
+	 */
 	public void displayImage(String uri, ImageAware imageAware, DisplayImageOptions options) {
 		displayImage(uri, imageAware, options, null, null);
 	}
 
 	/**
+	 * 添加图片加载显示任务到执行线程池中，这边显示图片ImageView控件被包装成ImageAware对象
 	 * Adds display image task to execution pool. Image will be set to ImageAware when it's turn.<br />
 	 * <b>NOTE:</b> {@link #init(ImageLoaderConfiguration)} method must be called before this method call
 	 *
@@ -179,12 +205,20 @@ public class ImageLoader {
 	 * @throws IllegalStateException    if {@link #init(ImageLoaderConfiguration)} method wasn't called before
 	 * @throws IllegalArgumentException if passed <b>imageAware</b> is null
 	 */
+	/**
+	 *
+	 * @param uri           图片URL地址
+	 * @param imageAware    imageview包装成ImageAware
+	 * @param options       图片显示相关参数
+	 * @param listener      图片加载进度监听器
+	 */
 	public void displayImage(String uri, ImageAware imageAware, DisplayImageOptions options,
 			ImageLoadingListener listener) {
 		displayImage(uri, imageAware, options, listener, null);
 	}
 
 	/**
+	 * 添加图片加载显示任务到执行线程池中，这边显示图片ImageView控件被包装成ImageAware对象
 	 * Adds display image task to execution pool. Image will be set to ImageAware when it's turn.<br />
 	 * <b>NOTE:</b> {@link #init(ImageLoaderConfiguration)} method must be called before this method call
 	 *
@@ -204,6 +238,14 @@ public class ImageLoader {
 	 *                         this listener work.
 	 * @throws IllegalStateException    if {@link #init(ImageLoaderConfiguration)} method wasn't called before
 	 * @throws IllegalArgumentException if passed <b>imageAware</b> is null
+	 */
+	/**
+	 *
+	 * @param uri                图片URL地址
+	 * @param imageAware         imageview包装成ImageAware
+	 * @param options            图片显示配置参数
+	 * @param listener           图片加载监听器
+	 * @param progressListener   图片下载进度监听器
 	 */
 	public void displayImage(String uri, ImageAware imageAware, DisplayImageOptions options,
 			ImageLoadingListener listener, ImageLoadingProgressListener progressListener) {
@@ -301,9 +343,10 @@ public class ImageLoader {
 			} else if (options.isResetViewBeforeLoading()) {
 				imageAware.setImageDrawable(null);
 			}
-
+            //进行构造图片加载任务相关的所有信息对象
 			ImageLoadingInfo imageLoadingInfo = new ImageLoadingInfo(uri, imageAware, targetSize, memoryCacheKey,
 					options, listener, progressListener, engine.getLockForUri(uri));
+			//分装图片加载和显示任务对象 然后进行开启执行任务
 			LoadAndDisplayImageTask displayTask = new LoadAndDisplayImageTask(engine, imageLoadingInfo,
 					defineHandler(options));
 			if (options.isSyncLoading()) {
@@ -331,6 +374,7 @@ public class ImageLoader {
 	}
 
 	/**
+	 *
 	 * Adds display image task to execution pool. Image will be set to ImageView when it's turn. <br/>
 	 * Default {@linkplain DisplayImageOptions display image options} from {@linkplain ImageLoaderConfiguration
 	 * configuration} will be used.<br />
@@ -425,6 +469,7 @@ public class ImageLoader {
 	}
 
 	/**
+	 * 添加图片加载任务到执行线程池中。图片会通过回调方法返回
 	 * Adds load image task to execution pool. Image will be returned with
 	 * {@link ImageLoadingListener#onLoadingComplete(String, android.view.View, android.graphics.Bitmap)} callback}.
 	 * <br />
@@ -435,11 +480,17 @@ public class ImageLoader {
 	 *                 thread if this method is called on UI thread.
 	 * @throws IllegalStateException if {@link #init(ImageLoaderConfiguration)} method wasn't called before
 	 */
+	/**
+	 * 添加图片加载任务到执行线程池中。图片会通过回调方法返回
+	 * @param uri                 图片URL地址
+	 * @param listener            图片加载监听器
+	 */
 	public void loadImage(String uri, ImageLoadingListener listener) {
 		loadImage(uri, null, null, listener, null);
 	}
 
 	/**
+	 * 添加图片加载任务到执行线程池中。图片会通过回调方法返回
 	 * Adds load image task to execution pool. Image will be returned with
 	 * {@link ImageLoadingListener#onLoadingComplete(String, android.view.View, android.graphics.Bitmap)} callback}.
 	 * <br />
@@ -455,11 +506,18 @@ public class ImageLoader {
 	 *                        events on UI thread if this method is called on UI thread.
 	 * @throws IllegalStateException if {@link #init(ImageLoaderConfiguration)} method wasn't called before
 	 */
+	/**
+	 * 添加图片加载任务到执行线程池中。图片会通过回调方法返回
+	 * @param uri                 图片URL地址
+	 * @param targetImageSize     期望目标图片大小尺寸
+	 * @param listener            图片加载监听器
+	 */
 	public void loadImage(String uri, ImageSize targetImageSize, ImageLoadingListener listener) {
 		loadImage(uri, targetImageSize, null, listener, null);
 	}
 
 	/**
+	 * 添加图片加载任务到执行线程池中。图片会通过回调方法返回
 	 * Adds load image task to execution pool. Image will be returned with
 	 * {@link ImageLoadingListener#onLoadingComplete(String, android.view.View, android.graphics.Bitmap)} callback}.
 	 * <br />
@@ -474,11 +532,18 @@ public class ImageLoader {
 	 *                 thread if this method is called on UI thread.
 	 * @throws IllegalStateException if {@link #init(ImageLoaderConfiguration)} method wasn't called before
 	 */
+	/**
+	 * 添加图片加载任务到执行线程池中。图片会通过回调方法返回
+	 * @param uri                 图片URL地址
+	 * @param options             图片配置项
+	 * @param listener            图片加载监听器
+	 */
 	public void loadImage(String uri, DisplayImageOptions options, ImageLoadingListener listener) {
 		loadImage(uri, null, options, listener, null);
 	}
 
 	/**
+	 * 添加图片加载任务到执行线程池中。图片会通过回调方法返回
 	 * Adds load image task to execution pool. Image will be returned with
 	 * {@link ImageLoadingListener#onLoadingComplete(String, android.view.View, android.graphics.Bitmap)} callback}.
 	 * <br />
@@ -498,12 +563,20 @@ public class ImageLoader {
 	 *                        events on UI thread if this method is called on UI thread.
 	 * @throws IllegalStateException if {@link #init(ImageLoaderConfiguration)} method wasn't called before
 	 */
+	/**
+	 * 添加图片加载任务到执行线程池中。图片会通过回调方法返回
+	 * @param uri                 图片URL地址
+	 * @param targetImageSize     期望目标图片大小尺寸
+	 * @param options             图片配置项
+	 * @param listener            图片加载监听器
+	 */
 	public void loadImage(String uri, ImageSize targetImageSize, DisplayImageOptions options,
 			ImageLoadingListener listener) {
 		loadImage(uri, targetImageSize, options, listener, null);
 	}
 
 	/**
+	 * 添加图片加载任务到执行线程池中。图片会通过回调方法返回
 	 * Adds load image task to execution pool. Image will be returned with
 	 * {@link ImageLoadingListener#onLoadingComplete(String, android.view.View, android.graphics.Bitmap)} callback}.
 	 * <br />
@@ -528,6 +601,14 @@ public class ImageLoader {
 	 *                         this listener work.
 	 * @throws IllegalStateException if {@link #init(ImageLoaderConfiguration)} method wasn't called before
 	 */
+	/**
+	 * 添加图片加载任务到执行线程池中。图片会通过回调方法返回
+	 * @param uri                 图片URL地址
+	 * @param targetImageSize     期望目标图片大小尺寸
+	 * @param options             图片配置项
+	 * @param listener            图片加载监听器
+	 * @param progressListener    图片下载进度监听器
+	 */
 	public void loadImage(String uri, ImageSize targetImageSize, DisplayImageOptions options,
 			ImageLoadingListener listener, ImageLoadingProgressListener progressListener) {
 		checkConfiguration();
@@ -543,6 +624,7 @@ public class ImageLoader {
 	}
 
 	/**
+	 * 使用同步方式进行加载和解码图片，传入图片的URL地址
 	 * Loads and decodes image synchronously.<br />
 	 * Default display image options
 	 * {@linkplain ImageLoaderConfiguration.Builder#defaultDisplayImageOptions(DisplayImageOptions) from
@@ -558,6 +640,7 @@ public class ImageLoader {
 	}
 
 	/**
+	 * 使用同步方式进行加载和解码图片，传入图片的URL地址，图片显示的配置项
 	 * Loads and decodes image synchronously.<br />
 	 * <b>NOTE:</b> {@link #init(ImageLoaderConfiguration)} method must be called before this method call
 	 *
@@ -569,11 +652,18 @@ public class ImageLoader {
 	 * @return Result image Bitmap. Can be <b>null</b> if image loading/decoding was failed or cancelled.
 	 * @throws IllegalStateException if {@link #init(ImageLoaderConfiguration)} method wasn't called before
 	 */
+	/**
+	 *
+	 * @param uri           图片资源URL地址
+	 * @param options       图片显示配置参数
+	 * @return
+	 */
 	public Bitmap loadImageSync(String uri, DisplayImageOptions options) {
 		return loadImageSync(uri, null, options);
 	}
 
 	/**
+	 * 使用同步方式进行加载和解码图片，传入图片的URL地址，期望的尺寸
 	 * Loads and decodes image synchronously.<br />
 	 * Default display image options
 	 * {@linkplain ImageLoaderConfiguration.Builder#defaultDisplayImageOptions(DisplayImageOptions) from
@@ -587,11 +677,18 @@ public class ImageLoader {
 	 * @return Result image Bitmap. Can be <b>null</b> if image loading/decoding was failed or cancelled.
 	 * @throws IllegalStateException if {@link #init(ImageLoaderConfiguration)} method wasn't called before
 	 */
+	/**
+	 *
+	 * @param uri                图片资源URL地址
+	 * @param targetImageSize    图片目标尺寸大小
+	 * @return
+	 */
 	public Bitmap loadImageSync(String uri, ImageSize targetImageSize) {
 		return loadImageSync(uri, targetImageSize, null);
 	}
 
 	/**
+	 * 使用同步方式进行加载和解码图片，传入图片的URL地址，期望的尺寸,图片显示的配置项
 	 * Loads and decodes image synchronously.<br />
 	 * <b>NOTE:</b> {@link #init(ImageLoaderConfiguration)} method must be called before this method call
 	 *
@@ -606,6 +703,13 @@ public class ImageLoader {
 	 * @return Result image Bitmap. Can be <b>null</b> if image loading/decoding was failed or cancelled.
 	 * @throws IllegalStateException if {@link #init(ImageLoaderConfiguration)} method wasn't called before
 	 */
+	/**
+	 *
+	 * @param uri                   资源URL地址
+	 * @param targetImageSize       显示目标图片尺寸大小
+	 * @param options               图片显示配置参数
+	 * @return
+	 */
 	public Bitmap loadImageSync(String uri, ImageSize targetImageSize, DisplayImageOptions options) {
 		if (options == null) {
 			options = configuration.defaultDisplayImageOptions;
@@ -618,6 +722,7 @@ public class ImageLoader {
 	}
 
 	/**
+	 * 检查ImageLoder配置是否已经被初始化
 	 * Checks if ImageLoader's configuration was initialized
 	 *
 	 * @throws IllegalStateException if configuration wasn't initialized
@@ -628,12 +733,16 @@ public class ImageLoader {
 		}
 	}
 
-	/** Sets a default loading listener for all display and loading tasks. */
+	/**
+	 * 为所有图片显示和加载任务添加加载监听器
+	 * Sets a default loading listener for all display and loading tasks.
+	 */
 	public void setDefaultLoadingListener(ImageLoadingListener listener) {
 		defaultListener = listener == null ? new SimpleImageLoadingListener() : listener;
 	}
 
 	/**
+	 * 获取内存缓存器
 	 * Returns memory cache
 	 *
 	 * @throws IllegalStateException if {@link #init(ImageLoaderConfiguration)} method wasn't called before
@@ -644,6 +753,7 @@ public class ImageLoader {
 	}
 
 	/**
+	 * 清楚内存缓存器重的方法
 	 * Clears memory cache
 	 *
 	 * @throws IllegalStateException if {@link #init(ImageLoaderConfiguration)} method wasn't called before
@@ -654,6 +764,7 @@ public class ImageLoader {
 	}
 
 	/**
+	 * 获取硬盘(DISK)缓存器
 	 * Returns disk cache
 	 *
 	 * @throws IllegalStateException if {@link #init(ImageLoaderConfiguration)} method wasn't called before
@@ -665,6 +776,7 @@ public class ImageLoader {
 	}
 
 	/**
+	 * 获取硬盘(DISK)缓存器
 	 * Returns disk cache
 	 *
 	 * @throws IllegalStateException if {@link #init(ImageLoaderConfiguration)} method wasn't called before
@@ -675,6 +787,7 @@ public class ImageLoader {
 	}
 
 	/**
+	 * 清除硬盘(DISK)缓存中的数据
 	 * Clears disk cache.
 	 *
 	 * @throws IllegalStateException if {@link #init(ImageLoaderConfiguration)} method wasn't called before
@@ -686,6 +799,7 @@ public class ImageLoader {
 	}
 
 	/**
+	 * 清除硬盘(DISK)缓存中的数据
 	 * Clears disk cache.
 	 *
 	 * @throws IllegalStateException if {@link #init(ImageLoaderConfiguration)} method wasn't called before
@@ -696,6 +810,7 @@ public class ImageLoader {
 	}
 
 	/**
+	 * 获取当前正在往ImageAware加载的URL地址
 	 * Returns URI of image which is loading at this moment into passed
 	 * {@link com.nostra13.universalimageloader.core.imageaware.ImageAware ImageAware}
 	 */
@@ -704,6 +819,7 @@ public class ImageLoader {
 	}
 
 	/**
+	 *获取当前正在往ImageView加载的URL地址
 	 * Returns URI of image which is loading at this moment into passed
 	 * {@link android.widget.ImageView ImageView}
 	 */
@@ -712,6 +828,7 @@ public class ImageLoader {
 	}
 
 	/**
+	 * 取消加载和显示Image的任务
 	 * Cancel the task of loading and displaying image for passed
 	 * {@link com.nostra13.universalimageloader.core.imageaware.ImageAware ImageAware}.
 	 *
@@ -723,6 +840,7 @@ public class ImageLoader {
 	}
 
 	/**
+	 * 取消加载和显示Image的任务
 	 * Cancel the task of loading and displaying image for passed
 	 * {@link android.widget.ImageView ImageView}.
 	 *
@@ -733,6 +851,7 @@ public class ImageLoader {
 	}
 
 	/**
+	 * 拒绝或者允许ImageLoder通过网络下载图片
 	 * Denies or allows ImageLoader to download images from the network.<br />
 	 * <br />
 	 * If downloads are denied and if image isn't cached then
@@ -747,6 +866,7 @@ public class ImageLoader {
 	}
 
 	/**
+	 *
 	 * Sets option whether ImageLoader will use {@link FlushedInputStream} for network downloads to handle <a
 	 * href="http://code.google.com/p/android/issues/detail?id=6066">this known problem</a> or not.
 	 *
@@ -758,6 +878,7 @@ public class ImageLoader {
 	}
 
 	/**
+	 * 暂停ImageLoader加载
 	 * Pause ImageLoader. All new "load&display" tasks won't be executed until ImageLoader is {@link #resume() resumed}.
 	 * <br />
 	 * Already running tasks are not paused.
@@ -766,12 +887,17 @@ public class ImageLoader {
 		engine.pause();
 	}
 
-	/** Resumes waiting "load&display" tasks */
+	/**
+	 * ImageLoader恢复加载
+	 * Resumes waiting "load&display" tasks
+	 *
+	 */
 	public void resume() {
 		engine.resume();
 	}
 
 	/**
+	 * 取消所有运行中和挂起的显示图片的任务
 	 * Cancels all running and scheduled display image tasks.<br />
 	 * <b>NOTE:</b> This method doesn't shutdown
 	 * {@linkplain com.nostra13.universalimageloader.core.ImageLoaderConfiguration.Builder#taskExecutor(java.util.concurrent.Executor)
@@ -783,6 +909,7 @@ public class ImageLoader {
 	}
 
 	/**
+	 * 停止并且清除当前配置
 	 * {@linkplain #stop() Stops ImageLoader} and clears current configuration. <br />
 	 * You can {@linkplain #init(ImageLoaderConfiguration) init} ImageLoader with new configuration after calling this
 	 * method.
@@ -795,17 +922,25 @@ public class ImageLoader {
 		configuration = null;
 	}
 
+	/**
+	 * 获取Handler进行任务分发
+	 * @param options
+	 * @return
+	 */
 	private static Handler defineHandler(DisplayImageOptions options) {
 		Handler handler = options.getHandler();
+		//同步加载，handler为null即可
 		if (options.isSyncLoading()) {
 			handler = null;
 		} else if (handler == null && Looper.myLooper() == Looper.getMainLooper()) {
+			//异步加载需要使用handler进行切换到主线程
 			handler = new Handler();
 		}
 		return handler;
 	}
 
 	/**
+	 * 图片同步加载监听器
 	 * Listener which is designed for synchronous image loading.
 	 *
 	 * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)

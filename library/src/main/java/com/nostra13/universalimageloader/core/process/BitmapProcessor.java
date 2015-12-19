@@ -19,6 +19,7 @@ import android.graphics.Bitmap;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 
 /**
+ *
  * Makes some processing on {@link Bitmap}. Implementations can apply any changes to original {@link Bitmap}.<br />
  * Implementations have to be thread-safe.
  *
