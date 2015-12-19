@@ -23,6 +23,7 @@ import com.nostra13.universalimageloader.core.imageaware.ImageAware;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
+ * 图片加载显示任务的信息对象封装实体类
  * Information for load'n'display image task
  *
  * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)
@@ -33,14 +34,21 @@ import java.util.concurrent.locks.ReentrantLock;
  * @since 1.3.1
  */
 final class ImageLoadingInfo {
-
+    /*图片URL地址*/
 	final String uri;
+	/*缓存key*/
 	final String memoryCacheKey;
+	/*imageview包装之后的imageaware*/
 	final ImageAware imageAware;
+	/*图片尺寸大小*/
 	final ImageSize targetSize;
+	/*图片显示配置参数*/
 	final DisplayImageOptions options;
+	/*图片加载监听器*/
 	final ImageLoadingListener listener;
+	/*图片下载进度监听器*/
 	final ImageLoadingProgressListener progressListener;
+	//加锁
 	final ReentrantLock loadFromUriLock;
 
 	public ImageLoadingInfo(String uri, ImageAware imageAware, ImageSize targetSize, String memoryCacheKey,
