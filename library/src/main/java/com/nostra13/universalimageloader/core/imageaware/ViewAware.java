@@ -134,6 +134,10 @@ public abstract class ViewAware implements ImageAware {
 		return viewRef.get();
 	}
 
+	/**
+	 * 表示当前iamgeview引用是否被回收
+	 * @return
+	 */
 	@Override
 	public boolean isCollected() {
 		return viewRef.get() == null;
