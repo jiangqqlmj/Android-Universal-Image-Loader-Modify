@@ -16,6 +16,7 @@
 package com.nostra13.universalimageloader.core.assist;
 
 /**
+ * 队列的算法类型，用于显示任务处理
  * Queue processing type which will be used for display task processing
  *
  * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)
