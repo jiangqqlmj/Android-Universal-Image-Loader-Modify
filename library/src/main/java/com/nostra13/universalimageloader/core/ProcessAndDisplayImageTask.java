@@ -23,6 +23,7 @@ import com.nostra13.universalimageloader.core.process.BitmapProcessor;
 import com.nostra13.universalimageloader.utils.L;
 
 /**
+ * 图片处理显示任务 --图片主要来自内存缓存中
  * Presents process'n'display image task. Processes image {@linkplain Bitmap} and display it in {@link ImageView} using
  * {@link DisplayBitmapTask}.
  *
@@ -32,12 +33,20 @@ import com.nostra13.universalimageloader.utils.L;
 final class ProcessAndDisplayImageTask implements Runnable {
 
 	private static final String LOG_POSTPROCESS_IMAGE = "PostProcess image before displaying [%s]";
-
+    /*ImageLoader引擎*/
 	private final ImageLoaderEngine engine;
 	private final Bitmap bitmap;
+	/*ImageLoader信息封装对象*/
 	private final ImageLoadingInfo imageLoadingInfo;
 	private final Handler handler;
 
+	/**
+	 * 图片处理显示任务构造器
+	 * @param engine
+	 * @param bitmap
+	 * @param imageLoadingInfo
+	 * @param handler
+	 */
 	public ProcessAndDisplayImageTask(ImageLoaderEngine engine, Bitmap bitmap, ImageLoadingInfo imageLoadingInfo,
 			Handler handler) {
 		this.engine = engine;
@@ -49,11 +58,13 @@ final class ProcessAndDisplayImageTask implements Runnable {
 	@Override
 	public void run() {
 		L.d(LOG_POSTPROCESS_IMAGE, imageLoadingInfo.memoryCacheKey);
-
+        //获取图片处理器 然后取得加载的图片
 		BitmapProcessor processor = imageLoadingInfo.options.getPostProcessor();
 		Bitmap processedBitmap = processor.process(bitmap);
+		//封装图片显示任务   其中图片来源设置成-来自内存缓存
 		DisplayBitmapTask displayBitmapTask = new DisplayBitmapTask(processedBitmap, imageLoadingInfo, engine,
 				LoadedFrom.MEMORY_CACHE);
+		//执行任务
 		LoadAndDisplayImageTask.runTask(displayBitmapTask, imageLoadingInfo.options.isSyncLoading(), handler, engine);
 	}
 }
