@@ -126,6 +126,9 @@ final class LoadAndDisplayImageTask implements Runnable, IoUtils.CopyListener {
 		syncLoading = options.isSyncLoading();
 	}
 
+	/**
+	 * 线程任务执行
+	 */
 	@Override
 	public void run() {
 		//如果当前状态是暂停 当前任务直接返回
