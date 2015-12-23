@@ -50,29 +50,41 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
+ * ImageLoader的默认配置工厂
  * Factory for providing of default options for {@linkplain ImageLoaderConfiguration configuration}
  *
  * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)
  * @since 1.5.6
  */
 public class DefaultConfigurationFactory {
-
-	/** Creates default implementation of task executor */
+	/**
+	 * Creates default implementation of task executor
+	 * 任务执行者的构造方法，当前用于实现默认的task executor
+	 */
 	public static Executor createExecutor(int threadPoolSize, int threadPriority,
 			QueueProcessingType tasksProcessingType) {
+		//初始化队列算法类型 默认为LIFO
 		boolean lifo = tasksProcessingType == QueueProcessingType.LIFO;
+		//初始化队列 根据不同的算法类型，创建不同的队列
 		BlockingQueue<Runnable> taskQueue =
 				lifo ? new LIFOLinkedBlockingDeque<Runnable>() : new LinkedBlockingQueue<Runnable>();
 		return new ThreadPoolExecutor(threadPoolSize, threadPoolSize, 0L, TimeUnit.MILLISECONDS, taskQueue,
 				createThreadFactory(threadPriority, "uil-pool-"));
 	}
 
-	/** Creates default implementation of task distributor */
+	/**
+	 * Creates default implementation of task distributor
+	 * 创建默认的task distributor
+	 */
 	public static Executor createTaskDistributor() {
+		//创建缓存线程池
 		return Executors.newCachedThreadPool(createThreadFactory(Thread.NORM_PRIORITY, "uil-pool-d-"));
 	}
 
-	/** Creates {@linkplain HashCodeFileNameGenerator default implementation} of FileNameGenerator */
+	/**
+	 * Creates {@linkplain HashCodeFileNameGenerator default implementation} of FileNameGenerator
+	 * 文件名称生成
+	 */
 	public static FileNameGenerator createFileNameGenerator() {
 		return new HashCodeFileNameGenerator();
 	}
@@ -83,10 +95,12 @@ public class DefaultConfigurationFactory {
 	 */
 	public static DiskCache createDiskCache(Context context, FileNameGenerator diskCacheFileNameGenerator,
 			long diskCacheSize, int diskCacheFileCount) {
+		//创建备用缓存文件
 		File reserveCacheDir = createReserveDiskCacheDir(context);
 		if (diskCacheSize > 0 || diskCacheFileCount > 0) {
 			File individualCacheDir = StorageUtils.getIndividualCacheDirectory(context);
 			try {
+				//创建本地文件系统缓存器
 				return new LruDiskCache(individualCacheDir, reserveCacheDir, diskCacheFileNameGenerator, diskCacheSize,
 						diskCacheFileCount);
 			} catch (IOException e) {
@@ -94,6 +108,7 @@ public class DefaultConfigurationFactory {
 				// continue and create unlimited cache
 			}
 		}
+		//创建无限制的文件缓存器
 		File cacheDir = StorageUtils.getCacheDirectory(context);
 		return new UnlimitedDiskCache(cacheDir, reserveCacheDir, diskCacheFileNameGenerator);
 	}
@@ -125,6 +140,10 @@ public class DefaultConfigurationFactory {
 		return new LruMemoryCache(memoryCacheSize);
 	}
 
+	/**
+	 * 判断系统SDK版本
+	 * @return
+	 */
 	private static boolean hasHoneycomb() {
 		return Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
 	}
@@ -139,26 +158,41 @@ public class DefaultConfigurationFactory {
 		return am.getLargeMemoryClass();
 	}
 
-	/** Creates default implementation of {@link ImageDownloader} - {@link BaseImageDownloader} */
+	/**
+	 * Creates default implementation of {@link ImageDownloader} - {@link BaseImageDownloader}
+	 * 创建默认的图片下载器
+	 */
 	public static ImageDownloader createImageDownloader(Context context) {
 		return new BaseImageDownloader(context);
 	}
 
-	/** Creates default implementation of {@link ImageDecoder} - {@link BaseImageDecoder} */
+	/**
+	 * Creates default implementation of {@link ImageDecoder} - {@link BaseImageDecoder}
+	 * 创建图片默认的解码器
+	 */
 	public static ImageDecoder createImageDecoder(boolean loggingEnabled) {
 		return new BaseImageDecoder(loggingEnabled);
 	}
 
-	/** Creates default implementation of {@link BitmapDisplayer} - {@link SimpleBitmapDisplayer} */
+	/**
+	 * Creates default implementation of {@link BitmapDisplayer} - {@link SimpleBitmapDisplayer}
+	 * 创建图片默认的显示器
+	 */
 	public static BitmapDisplayer createBitmapDisplayer() {
 		return new SimpleBitmapDisplayer();
 	}
 
-	/** Creates default implementation of {@linkplain ThreadFactory thread factory} for task executor */
+	/**
+	 * Creates default implementation of {@linkplain ThreadFactory thread factory} for task executor
+	 * 创建默认的线程工厂
+	 */
 	private static ThreadFactory createThreadFactory(int threadPriority, String threadNamePrefix) {
 		return new DefaultThreadFactory(threadPriority, threadNamePrefix);
 	}
 
+	/**
+	 * 默认的线程工厂
+	 */
 	private static class DefaultThreadFactory implements ThreadFactory {
 
 		private static final AtomicInteger poolNumber = new AtomicInteger(1);
@@ -174,6 +208,11 @@ public class DefaultConfigurationFactory {
 			namePrefix = threadNamePrefix + poolNumber.getAndIncrement() + "-thread-";
 		}
 
+		/**
+		 * 线程创建 会回调的方法
+		 * @param r
+		 * @return
+		 */
 		@Override
 		public Thread newThread(Runnable r) {
 			Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 0);
