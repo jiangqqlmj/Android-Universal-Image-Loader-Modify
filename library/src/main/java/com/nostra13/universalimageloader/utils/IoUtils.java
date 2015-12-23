@@ -97,7 +97,7 @@ public final class IoUtils {
 
 	/**
 	 * Reads all data from stream and close it silently
-	 *
+	 * 读取流 然后关闭流方法
 	 * @param is Input stream
 	 */
 	public static void readAndCloseStream(InputStream is) {
@@ -110,6 +110,10 @@ public final class IoUtils {
 		}
 	}
 
+	/**
+	 * 流相关资源释放 关闭
+	 * @param closeable
+	 */
 	public static void closeSilently(Closeable closeable) {
 		if (closeable != null) {
 			try {
@@ -119,7 +123,10 @@ public final class IoUtils {
 		}
 	}
 
-	/** Listener and controller for copy process */
+	/*
+	 * Listener and controller for copy process
+	 * 进行监听复制拷贝进度
+	 */
 	public static interface CopyListener {
 		/**
 		 * @param current Loaded bytes

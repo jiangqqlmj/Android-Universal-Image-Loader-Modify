@@ -40,6 +40,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
+ * 图片加载和显示任务线程。 使用网络下载的或者本地文件系统缓存中图片。
+ * 这边采用DisplayBitmapTak任务线程来进行显示图片
  * Presents load'n'display image task. Used to load image from Internet or file system, decode it to {@link Bitmap}, and
  * display it in {@link com.nostra13.universalimageloader.core.imageaware.ImageAware} using {@link DisplayBitmapTask}.
  *
@@ -72,16 +74,19 @@ final class LoadAndDisplayImageTask implements Runnable, IoUtils.CopyListener {
 	private static final String ERROR_PRE_PROCESSOR_NULL = "Pre-processor returned null [%s]";
 	private static final String ERROR_POST_PROCESSOR_NULL = "Post-processor returned null [%s]";
 	private static final String ERROR_PROCESSOR_FOR_DISK_CACHE_NULL = "Bitmap processor for disk cache returned null [%s]";
-
+    /*图片加载引擎*/
 	private final ImageLoaderEngine engine;
+	/*图片加载相关信息对象*/
 	private final ImageLoadingInfo imageLoadingInfo;
 	private final Handler handler;
 
-	// Helper references
+	// Helper references  帮助项配置
+	/*图片加载器配置信息*/
 	private final ImageLoaderConfiguration configuration;
 	private final ImageDownloader downloader;
 	private final ImageDownloader networkDeniedDownloader;
 	private final ImageDownloader slowNetworkDownloader;
+	//图片解码器
 	private final ImageDecoder decoder;
 	final String uri;
 	private final String memoryCacheKey;
@@ -92,9 +97,15 @@ final class LoadAndDisplayImageTask implements Runnable, IoUtils.CopyListener {
 	final ImageLoadingProgressListener progressListener;
 	private final boolean syncLoading;
 
-	// State vars
+	// State vars  图片来源信息   默认为来源网络
 	private LoadedFrom loadedFrom = LoadedFrom.NETWORK;
 
+	/**
+	 * 图片加载和显示任务构造方法
+	 * @param engine                 图片加载引擎
+	 * @param imageLoadingInfo       图片加载封装相关信息对象
+	 * @param handler
+	 */
 	public LoadAndDisplayImageTask(ImageLoaderEngine engine, ImageLoadingInfo imageLoadingInfo, Handler handler) {
 		this.engine = engine;
 		this.imageLoadingInfo = imageLoadingInfo;
@@ -117,7 +128,9 @@ final class LoadAndDisplayImageTask implements Runnable, IoUtils.CopyListener {
 
 	@Override
 	public void run() {
+		//如果当前状态是暂停 当前任务直接返回
 		if (waitIfPaused()) return;
+		//如果当前状态需要等待  当前任务直接返回
 		if (delayIfNeed()) return;
 
 		ReentrantLock loadFromUriLock = imageLoadingInfo.loadFromUriLock;
@@ -125,14 +138,16 @@ final class LoadAndDisplayImageTask implements Runnable, IoUtils.CopyListener {
 		if (loadFromUriLock.isLocked()) {
 			L.d(LOG_WAITING_FOR_IMAGE_LOADED, memoryCacheKey);
 		}
-
+        //任务加锁
 		loadFromUriLock.lock();
 		Bitmap bmp;
 		try {
+			//进行检查任务  判断当前要显示的引用对象是否已经被回收了
 			checkTaskNotActual();
-
+            //先从缓存中获取图片
 			bmp = configuration.memoryCache.get(memoryCacheKey);
 			if (bmp == null || bmp.isRecycled()) {
+				//进行尝试获取加载图片（去文件中，文件中不存在去网络下载，然后缓存到文件）
 				bmp = tryLoadBitmap();
 				if (bmp == null) return; // listener callback already was fired
 
@@ -152,6 +167,8 @@ final class LoadAndDisplayImageTask implements Runnable, IoUtils.CopyListener {
 					configuration.memoryCache.put(memoryCacheKey, bmp);
 				}
 			} else {
+				//从缓存中获取到图片信息
+				//设置图片来源信息 --Memory Cache
 				loadedFrom = LoadedFrom.MEMORY_CACHE;
 				L.d(LOG_GET_IMAGE_FROM_MEMORY_CACHE_AFTER_WAITING, memoryCacheKey);
 			}
@@ -169,14 +186,19 @@ final class LoadAndDisplayImageTask implements Runnable, IoUtils.CopyListener {
 			fireCancelEvent();
 			return;
 		} finally {
+			//任务取消锁
 			loadFromUriLock.unlock();
 		}
-
+		//封装图片显示任务对象
 		DisplayBitmapTask displayBitmapTask = new DisplayBitmapTask(bmp, imageLoadingInfo, engine, loadedFrom);
+		//进行任务运行
 		runTask(displayBitmapTask, syncLoading, handler, engine);
 	}
 
-	/** @return <b>true</b> - if task should be interrupted; <b>false</b> - otherwise */
+	/**
+	 * @return <b>true</b> - if task should be interrupted; <b>false</b> - otherwise
+	 * 判断是否需要等待暂时
+	 */
 	private boolean waitIfPaused() {
 		AtomicBoolean pause = engine.getPause();
 		if (pause.get()) {
@@ -196,7 +218,10 @@ final class LoadAndDisplayImageTask implements Runnable, IoUtils.CopyListener {
 		return isTaskNotActual();
 	}
 
-	/** @return <b>true</b> - if task should be interrupted; <b>false</b> - otherwise */
+	/**
+	 * @return <b>true</b> - if task should be interrupted; <b>false</b> - otherwise
+	 * 判断是否需要延时
+	 */
 	private boolean delayIfNeed() {
 		if (options.shouldDelayBeforeLoading()) {
 			L.d(LOG_DELAY_BEFORE_LOADING, options.getDelayBeforeLoading(), memoryCacheKey);
@@ -211,23 +236,33 @@ final class LoadAndDisplayImageTask implements Runnable, IoUtils.CopyListener {
 		return false;
 	}
 
+	/**
+	 * 进行尝试获取加载图片
+	 * @return
+	 * @throws TaskCancelledException  抛出任务被取消异常
+	 */
 	private Bitmap tryLoadBitmap() throws TaskCancelledException {
 		Bitmap bitmap = null;
 		try {
+			//从本地文件缓存中获取图片
 			File imageFile = configuration.diskCache.get(uri);
 			if (imageFile != null && imageFile.exists() && imageFile.length() > 0) {
 				L.d(LOG_LOAD_IMAGE_FROM_DISK_CACHE, memoryCacheKey);
+				//文件存在设置图片来源
 				loadedFrom = LoadedFrom.DISC_CACHE;
-
+                //检查引用是否已经被回收了
 				checkTaskNotActual();
+                //图片解码，文件转换成bitmap对象
 				bitmap = decodeImage(Scheme.FILE.wrap(imageFile.getAbsolutePath()));
 			}
 			if (bitmap == null || bitmap.getWidth() <= 0 || bitmap.getHeight() <= 0) {
 				L.d(LOG_LOAD_IMAGE_FROM_NETWORK, memoryCacheKey);
+				//本地文件系统中图片解码失败，尝试通过网络获取
 				loadedFrom = LoadedFrom.NETWORK;
-
 				String imageUriForDecoding = uri;
+				//判断图片可以本地文件系统缓存以及尝试本地文本系统缓存(网络下载图片,下载成功图片缓存本地文件系统)
 				if (options.isCacheOnDisk() && tryCacheImageOnDisk()) {
+					//从本地文件系统缓存中获取图片
 					imageFile = configuration.diskCache.get(uri);
 					if (imageFile != null) {
 						imageUriForDecoding = Scheme.FILE.wrap(imageFile.getAbsolutePath());
@@ -235,9 +270,11 @@ final class LoadAndDisplayImageTask implements Runnable, IoUtils.CopyListener {
 				}
 
 				checkTaskNotActual();
+				//图片解码
 				bitmap = decodeImage(imageUriForDecoding);
 
 				if (bitmap == null || bitmap.getWidth() <= 0 || bitmap.getHeight() <= 0) {
+					//回调图片解码失败
 					fireFailEvent(FailType.DECODING_ERROR, null);
 				}
 			}
@@ -255,9 +292,16 @@ final class LoadAndDisplayImageTask implements Runnable, IoUtils.CopyListener {
 			L.e(e);
 			fireFailEvent(FailType.UNKNOWN, e);
 		}
+		//图片存在 返回
 		return bitmap;
 	}
 
+	/**
+	 * 根据图片资源地址进行解码图片
+	 * @param imageUri   图片资源地址
+	 * @return
+	 * @throws IOException
+	 */
 	private Bitmap decodeImage(String imageUri) throws IOException {
 		ViewScaleType viewScaleType = imageAware.getScaleType();
 		ImageDecodingInfo decodingInfo = new ImageDecodingInfo(memoryCacheKey, imageUri, uri, targetSize, viewScaleType,
@@ -265,18 +309,23 @@ final class LoadAndDisplayImageTask implements Runnable, IoUtils.CopyListener {
 		return decoder.decode(decodingInfo);
 	}
 
-	/** @return <b>true</b> - if image was downloaded successfully; <b>false</b> - otherwise */
+	/**
+	 *
+ 	 * 图片下载 并且保存本地，图片压缩
+	 * @return <b>true</b> - if image was downloaded successfully; <b>false</b> - otherwise
+	 */
 	private boolean tryCacheImageOnDisk() throws TaskCancelledException {
 		L.d(LOG_CACHE_IMAGE_ON_DISK, memoryCacheKey);
-
 		boolean loaded;
 		try {
+			//图片下载并且保存本地
 			loaded = downloadImage();
 			if (loaded) {
 				int width = configuration.maxImageWidthForDiskCache;
 				int height = configuration.maxImageHeightForDiskCache;
 				if (width > 0 || height > 0) {
 					L.d(LOG_RESIZE_CACHED_IMAGE_FILE, memoryCacheKey);
+					//根据尺寸大小配置 进行图片缩放和保存
 					resizeAndSaveImage(width, height); // TODO : process boolean result
 				}
 			}
@@ -287,6 +336,11 @@ final class LoadAndDisplayImageTask implements Runnable, IoUtils.CopyListener {
 		return loaded;
 	}
 
+	/**
+	 * 图片通过网络下载,并且下载成功之后 进行本地文件系统缓存
+	 * @return         下载并且缓存本地文件系统成功返回 true，否则返回false
+	 * @throws IOException
+	 */
 	private boolean downloadImage() throws IOException {
 		InputStream is = getDownloader().getStream(uri, options.getExtraForDownloader());
 		if (is == null) {
@@ -294,6 +348,7 @@ final class LoadAndDisplayImageTask implements Runnable, IoUtils.CopyListener {
 			return false;
 		} else {
 			try {
+				//进行图片资源缓存到本地文件系统中
 				return configuration.diskCache.save(uri, is, this);
 			} finally {
 				IoUtils.closeSilently(is);
@@ -301,18 +356,24 @@ final class LoadAndDisplayImageTask implements Runnable, IoUtils.CopyListener {
 		}
 	}
 
-	/** Decodes image file into Bitmap, resize it and save it back */
+	/**
+	 * Decodes image file into Bitmap, resize it and save it back
+	 * 解码图片 进行图片尺寸修改，然后保存
+	 */
 	private boolean resizeAndSaveImage(int maxWidth, int maxHeight) throws IOException {
 		// Decode image file, compress and re-save it
 		boolean saved = false;
 		File targetFile = configuration.diskCache.get(uri);
 		if (targetFile != null && targetFile.exists()) {
+			//构建图片尺寸size对象
 			ImageSize targetImageSize = new ImageSize(maxWidth, maxHeight);
+			//图片显示配置参数构建
 			DisplayImageOptions specialOptions = new DisplayImageOptions.Builder().cloneFrom(options)
 					.imageScaleType(ImageScaleType.IN_SAMPLE_INT).build();
 			ImageDecodingInfo decodingInfo = new ImageDecodingInfo(memoryCacheKey,
 					Scheme.FILE.wrap(targetFile.getAbsolutePath()), uri, targetImageSize, ViewScaleType.FIT_INSIDE,
 					getDownloader(), specialOptions);
+			//获取解码之后的图片
 			Bitmap bmp = decoder.decode(decodingInfo);
 			if (bmp != null && configuration.processorForDiskCache != null) {
 				L.d(LOG_PROCESS_IMAGE_BEFORE_CACHE_ON_DISK, memoryCacheKey);
@@ -322,6 +383,7 @@ final class LoadAndDisplayImageTask implements Runnable, IoUtils.CopyListener {
 				}
 			}
 			if (bmp != null) {
+				//图片重新保存本地文件系统
 				saved = configuration.diskCache.save(uri, bmp);
 				bmp.recycle();
 			}
@@ -329,51 +391,84 @@ final class LoadAndDisplayImageTask implements Runnable, IoUtils.CopyListener {
 		return saved;
 	}
 
+	/**
+	 * 字节流正在拷贝的时候调用
+	 * @param current Loaded bytes
+	 * @param total   Total bytes for loading
+	 * @return
+	 */
 	@Override
 	public boolean onBytesCopied(int current, int total) {
 		return syncLoading || fireProgressEvent(current, total);
 	}
 
 	/** @return <b>true</b> - if loading should be continued; <b>false</b> - if loading should be interrupted */
+	/**
+	 * 进行图片进度事件
+	 * @param current  当前图片下载的图片资源大小
+	 * @param total    图片资源下载的总大小
+	 * @return
+	 */
 	private boolean fireProgressEvent(final int current, final int total) {
 		if (isTaskInterrupted() || isTaskNotActual()) return false;
 		if (progressListener != null) {
 			Runnable r = new Runnable() {
 				@Override
 				public void run() {
+					//进行回调图片加载进度信息
 					progressListener.onProgressUpdate(uri, imageAware.getWrappedView(), current, total);
 				}
 			};
+			//执行任务
 			runTask(r, false, handler, engine);
 		}
 		return true;
 	}
 
+	/**
+	 * 图片加载失败事件处理分发
+	 * @param failType
+	 * @param failCause
+	 */
 	private void fireFailEvent(final FailType failType, final Throwable failCause) {
 		if (syncLoading || isTaskInterrupted() || isTaskNotActual()) return;
 		Runnable r = new Runnable() {
 			@Override
 			public void run() {
 				if (options.shouldShowImageOnFail()) {
+					//存在图片加载失败的占位图片配置，进行设置
 					imageAware.setImageDrawable(options.getImageOnFail(configuration.resources));
 				}
+				//进行回调图片加载失败方法
 				listener.onLoadingFailed(uri, imageAware.getWrappedView(), new FailReason(failType, failCause));
 			}
 		};
+		//任务进行运行
 		runTask(r, false, handler, engine);
 	}
 
+	/**
+	 * 取消事件处理
+	 */
 	private void fireCancelEvent() {
 		if (syncLoading || isTaskInterrupted()) return;
 		Runnable r = new Runnable() {
 			@Override
 			public void run() {
+				/**
+				 * 进行回调图片加载取消的方法
+				 */
 				listener.onLoadingCancelled(uri, imageAware.getWrappedView());
 			}
 		};
+		//任务执行
 		runTask(r, false, handler, engine);
 	}
 
+	/**
+	 * 获取下载加载器
+	 * @return
+	 */
 	private ImageDownloader getDownloader() {
 		ImageDownloader d;
 		if (engine.isNetworkDenied()) {
@@ -411,7 +506,10 @@ final class LoadAndDisplayImageTask implements Runnable, IoUtils.CopyListener {
 		}
 	}
 
-	/** @return <b>true</b> - if target ImageAware is collected by GC; <b>false</b> - otherwise */
+	/**
+	 * @return <b>true</b> - if target ImageAware is collected by GC; <b>false</b> - otherwise
+	 * 判断ImageAware是否已经被GC回收
+	 */
 	private boolean isViewCollected() {
 		if (imageAware.isCollected()) {
 			L.d(LOG_TASK_CANCELLED_IMAGEAWARE_COLLECTED, memoryCacheKey);
@@ -460,12 +558,21 @@ final class LoadAndDisplayImageTask implements Runnable, IoUtils.CopyListener {
 		return uri;
 	}
 
+	/**
+	 * 任务运行方法
+	 * @param r           任务运行线程
+	 * @param sync        是否同步标志
+	 * @param handler     任务分发处理
+	 * @param engine      图片加载引擎
+	 */
 	static void runTask(Runnable r, boolean sync, Handler handler, ImageLoaderEngine engine) {
 		if (sync) {
+			//如果同步 任务直接运行
 			r.run();
 		} else if (handler == null) {
 			engine.fireCallback(r);
 		} else {
+			//任务通过Handler分发到主线程执行
 			handler.post(r);
 		}
 	}
@@ -473,7 +580,7 @@ final class LoadAndDisplayImageTask implements Runnable, IoUtils.CopyListener {
 	/**
 	 * Exceptions for case when task is cancelled (thread is interrupted, image view is reused for another task, view is
 	 * collected by GC).
-	 *
+	 * 自定义任务取消异常
 	 * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)
 	 * @since 1.9.1
 	 */
