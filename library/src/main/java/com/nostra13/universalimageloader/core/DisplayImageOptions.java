@@ -28,6 +28,7 @@ import com.nostra13.universalimageloader.core.download.ImageDownloader;
 import com.nostra13.universalimageloader.core.process.BitmapProcessor;
 
 /**
+ * 图片显示相关的配置参数
  * Contains options for image display. Defines:
  * <ul>
  * <li>whether stub image will be displayed in {@link com.nostra13.universalimageloader.core.imageaware.ImageAware
@@ -63,19 +64,30 @@ import com.nostra13.universalimageloader.core.process.BitmapProcessor;
  * @since 1.0.0
  */
 public final class DisplayImageOptions {
-
+    /*图片正在加载过程中的图片*/
 	private final int imageResOnLoading;
+	/*图片地址为空，显示的图片*/
 	private final int imageResForEmptyUri;
+	/*图片加载失败，显示的图片*/
 	private final int imageResOnFail;
+	/*图片资源 正在加载的图片*/
 	private final Drawable imageOnLoading;
+	/*图片资源 图片地址为空情况*/
 	private final Drawable imageForEmptyUri;
+	/*图片资源 图片下载失败情况*/
 	private final Drawable imageOnFail;
+	/*标志在加载之前是否需要重置view*/
 	private final boolean resetViewBeforeLoading;
+	/*标志是否开启内存缓存*/
 	private final boolean cacheInMemory;
+	/*标志是否要开启本地文件系统缓存*/
 	private final boolean cacheOnDisk;
 	private final ImageScaleType imageScaleType;
+	/*图片解码参数配置*/
 	private final Options decodingOptions;
+	/*在图片记载之前延迟的时间*/
 	private final int delayBeforeLoading;
+	/*标志是否需要exif参数*/
 	private final boolean considerExifParams;
 	private final Object extraForDownloader;
 	private final BitmapProcessor preProcessor;
@@ -85,6 +97,10 @@ public final class DisplayImageOptions {
 	//配置是否为同步加载 
 	private final boolean isSyncLoading;
 
+	/**
+	 * 进行初始化图片显示配置  传入配置项目构建器
+	 * @param builder
+	 */
 	private DisplayImageOptions(Builder builder) {
 		imageResOnLoading = builder.imageResOnLoading;
 		imageResForEmptyUri = builder.imageResForEmptyUri;
@@ -107,14 +123,26 @@ public final class DisplayImageOptions {
 		isSyncLoading = builder.isSyncLoading;
 	}
 
+	/**
+	 * 获取是否需要在加载过程中显示图片
+	 * @return
+	 */
 	public boolean shouldShowImageOnLoading() {
 		return imageOnLoading != null || imageResOnLoading != 0;
 	}
 
+	/**
+	 * 获取是否当图片地址为空得时候显示图片
+	 * @return
+	 */
 	public boolean shouldShowImageForEmptyUri() {
 		return imageForEmptyUri != null || imageResForEmptyUri != 0;
 	}
 
+	/**
+	 * 获取是否当图片下载失败的时候显示图片
+	 * @return
+	 */
 	public boolean shouldShowImageOnFail() {
 		return imageOnFail != null || imageResOnFail != 0;
 	}
@@ -201,6 +229,7 @@ public final class DisplayImageOptions {
 	 * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)
 	 */
 	public static class Builder {
+		//以下各大属性注释和前面的全局变量注释一样，这边这边加入了默认值
 		private int imageResOnLoading = 0;
 		private int imageResForEmptyUri = 0;
 		private int imageResOnFail = 0;
@@ -488,6 +517,7 @@ public final class DisplayImageOptions {
 	}
 
 	/**
+	 * 进行创建默认的图片显示配置
 	 * Creates options appropriate for single displaying:
 	 * <ul>
 	 * <li>View will <b>not</b> be reset before loading</li>
