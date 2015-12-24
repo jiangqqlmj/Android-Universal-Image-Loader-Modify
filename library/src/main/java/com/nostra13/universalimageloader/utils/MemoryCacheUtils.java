@@ -26,6 +26,7 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
+ * 工具类 对于内存缓存中生成keys，key值比较，已经查询缓存图片，缓存key以及删除相关工作
  * Utility for generating of keys for memory cache, key comparing and other work with memory cache
  *
  * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)
@@ -40,6 +41,7 @@ public final class MemoryCacheUtils {
 	}
 
 	/**
+	 * 在内存缓存中 生成key的规格为图片的URL地址加上图片尺寸大小信息
 	 * Generates key for memory cache for incoming image (URI + size).<br />
 	 * Pattern for cache key - <b>[imageUri]_[width]x[height]</b>.
 	 */
@@ -47,6 +49,10 @@ public final class MemoryCacheUtils {
 		return new StringBuilder(imageUri).append(URI_AND_SIZE_SEPARATOR).append(targetSize.getWidth()).append(WIDTH_AND_HEIGHT_SEPARATOR).append(targetSize.getHeight()).toString();
 	}
 
+	/**
+	 * 进行比较查询
+	 * @return
+	 */
 	public static Comparator<String> createFuzzyKeyComparator() {
 		return new Comparator<String>() {
 			@Override
@@ -59,6 +65,7 @@ public final class MemoryCacheUtils {
 	}
 
 	/**
+	 * 根据图片路径进行搜索所有在内存缓存中的图片
 	 * Searches all bitmaps in memory cache which are corresponded to incoming URI.<br />
 	 * <b>Note:</b> Memory cache can contain multiple sizes of the same image if only you didn't set
 	 * {@link ImageLoaderConfiguration.Builder#denyCacheImageMultipleSizesInMemory()
@@ -75,6 +82,7 @@ public final class MemoryCacheUtils {
 	}
 
 	/**
+	 * 搜索内存缓存中有缓存keys
 	 * Searches all keys in memory cache which are corresponded to incoming URI.<br />
 	 * <b>Note:</b> Memory cache can contain multiple sizes of the same image if only you didn't set
 	 * {@link ImageLoaderConfiguration.Builder#denyCacheImageMultipleSizesInMemory()
@@ -91,6 +99,7 @@ public final class MemoryCacheUtils {
 	}
 
 	/**
+	 * 根据图片的连接地址 进行从缓存中删除所有的该缓存的数据
 	 * Removes from memory cache all images for incoming URI.<br />
 	 * <b>Note:</b> Memory cache can contain multiple sizes of the same image if only you didn't set
 	 * {@link ImageLoaderConfiguration.Builder#denyCacheImageMultipleSizesInMemory()
