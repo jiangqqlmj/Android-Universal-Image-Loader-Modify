@@ -35,6 +35,7 @@ public final class L {
 	}
 
 	/**
+	 * 打开日志打印 已废弃
 	 * Enables logger (if {@link #disableLogging()} was called before)
 	 *
 	 * @deprecated Use {@link #writeLogs(boolean) writeLogs(true)} instead
@@ -45,6 +46,7 @@ public final class L {
 	}
 
 	/**
+	 * 关闭日志打印 已废弃
 	 * Disables logger, no logs will be passed to LogCat, all log methods will do nothing
 	 *
 	 * @deprecated Use {@link #writeLogs(boolean) writeLogs(false)} instead
@@ -55,6 +57,7 @@ public final class L {
 	}
 
 	/**
+	 * 进行打开或者关闭调试日志打印功能
 	 * Enables/disables detail logging of {@link ImageLoader} work.
 	 * Consider {@link com.nostra13.universalimageloader.utils.L#disableLogging()} to disable
 	 * ImageLoader logging completely (even error logs)<br />
@@ -64,7 +67,10 @@ public final class L {
 		L.writeDebugLogs = writeDebugLogs;
 	}
 
-	/** Enables/disables logging of {@link ImageLoader} completely (even error logs). */
+	/**
+	 * Enables/disables logging of {@link ImageLoader} completely (even error logs).
+	 * 打开或者关闭所有日志打印功能
+	 */
 	public static void writeLogs(boolean writeLogs) {
 		L.writeLogs = writeLogs;
 	}
@@ -95,6 +101,13 @@ public final class L {
 		log(Log.ERROR, ex, message, args);
 	}
 
+	/**
+	 * 日志格式转换 以及输出
+	 * @param priority
+	 * @param ex
+	 * @param message
+	 * @param args
+	 */
 	private static void log(int priority, Throwable ex, String message, Object... args) {
 		if (!writeLogs) return;
 		if (args.length > 0) {
