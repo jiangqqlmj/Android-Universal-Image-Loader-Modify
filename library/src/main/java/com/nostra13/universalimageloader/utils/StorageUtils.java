@@ -25,6 +25,7 @@ import java.io.IOException;
 import static android.os.Environment.MEDIA_MOUNTED;
 
 /**
+ * 应用存储(主要是sdcard)相关路径处理工具类
  * Provides application storage paths
  *
  * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)
@@ -39,6 +40,7 @@ public final class StorageUtils {
 	}
 
 	/**
+	 * 获取缓存路径
 	 * Returns application cache directory. Cache directory will be created on SD card
 	 * <i>("/Android/data/[app_package_name]/cache")</i> if card is mounted and app has appropriate permission. Else -
 	 * Android defines cache directory on device's file system.
@@ -53,12 +55,13 @@ public final class StorageUtils {
 	}
 
 	/**
+	 * 根据方法传入的第二个参数，来决定是否要支持外部缓存路径。 如果缓存文件夹建立在sdcard中，那应用需要有挂载可读写的权限
 	 * Returns application cache directory. Cache directory will be created on SD card
 	 * <i>("/Android/data/[app_package_name]/cache")</i> (if card is mounted and app has appropriate permission) or
 	 * on device's file system depending incoming parameters.
 	 *
 	 * @param context        Application context
-	 * @param preferExternal Whether prefer external location for cache
+	 * @param preferExternal Whether prefer external location for cache  标志是否需要外部缓存路径
 	 * @return Cache {@link File directory}.<br />
 	 * <b>NOTE:</b> Can be null in some unpredictable cases (if SD card is unmounted and
 	 * {@link android.content.Context#getCacheDir() Context.getCacheDir()} returns null).
@@ -67,15 +70,19 @@ public final class StorageUtils {
 		File appCacheDir = null;
 		String externalStorageState;
 		try {
+		//获取外部储存的状态
 			externalStorageState = Environment.getExternalStorageState();
 		} catch (NullPointerException e) { // (sh)it happens (Issue #660)
 			externalStorageState = "";
 		} catch (IncompatibleClassChangeError e) { // (sh)it happens too (Issue #989)
 			externalStorageState = "";
 		}
+		//判断是否可以在外部存储中创建缓存
 		if (preferExternal && MEDIA_MOUNTED.equals(externalStorageState) && hasExternalStoragePermission(context)) {
+			//进行创建外部缓存路径
 			appCacheDir = getExternalCacheDir(context);
 		}
+		//如果外部存储中缓存路径创建失败-进行获取应用内文件路径
 		if (appCacheDir == null) {
 			appCacheDir = context.getCacheDir();
 		}
@@ -88,6 +95,7 @@ public final class StorageUtils {
 	}
 
 	/**
+	 * 获取指定(默认)的缓存路径
 	 * Returns individual application cache directory (for only image caching from ImageLoader). Cache directory will be
 	 * created on SD card <i>("/Android/data/[app_package_name]/cache/uil-images")</i> if card is mounted and app has
 	 * appropriate permission. Else - Android defines cache directory on device's file system.
@@ -100,6 +108,7 @@ public final class StorageUtils {
 	}
 
 	/**
+	 * 获取指定(默认)的缓存路径
 	 * Returns individual application cache directory (for only image caching from ImageLoader). Cache directory will be
 	 * created on SD card <i>("/Android/data/[app_package_name]/cache/uil-images")</i> if card is mounted and app has
 	 * appropriate permission. Else - Android defines cache directory on device's file system.
@@ -174,6 +183,11 @@ public final class StorageUtils {
 		return appCacheDir;
 	}
 
+	/**
+	 * 判断是否有外部存储相关权限
+	 * @param context
+	 * @return
+	 */
 	private static boolean hasExternalStoragePermission(Context context) {
 		int perm = context.checkCallingOrSelfPermission(EXTERNAL_STORAGE_PERMISSION);
 		return perm == PackageManager.PERMISSION_GRANTED;
