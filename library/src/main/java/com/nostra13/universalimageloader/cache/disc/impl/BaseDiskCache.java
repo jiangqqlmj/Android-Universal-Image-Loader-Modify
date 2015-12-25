@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
+ * 文件系统缓存(磁盘缓存)工具基础抽象类   该类已经实现了相关统一方法和扩展
  * Base disk cache.
  *
  * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)
@@ -36,32 +37,48 @@ import java.io.OutputStream;
  * @since 1.0.0
  */
 public abstract class BaseDiskCache implements DiskCache {
-	/** {@value */
+	/**
+	 * {@value}
+	 * 默认缓存区大小
+	 */
 	public static final int DEFAULT_BUFFER_SIZE = 32 * 1024; // 32 Kb
-	/** {@value */
+	/**
+	 * {@value}
+	 * 默认图片压缩格式
+	 */
 	public static final Bitmap.CompressFormat DEFAULT_COMPRESS_FORMAT = Bitmap.CompressFormat.PNG;
-	/** {@value */
+	/**
+	 * {@value}
+	 * 默认图片压缩质量
+	 */
 	public static final int DEFAULT_COMPRESS_QUALITY = 100;
 
 	private static final String ERROR_ARG_NULL = " argument must be not null";
 	private static final String TEMP_IMAGE_POSTFIX = ".tmp";
 
+	/*缓存文件夹*/
 	protected final File cacheDir;
+	/*备用缓存文件夹*/
 	protected final File reserveCacheDir;
-
+    /*文件名生成器*/
 	protected final FileNameGenerator fileNameGenerator;
-
+    /*缓冲区大小  已经赋值默认缓冲区大小*/
 	protected int bufferSize = DEFAULT_BUFFER_SIZE;
-
+	/*图片压缩格式  已经赋值默认压缩格式*/
 	protected Bitmap.CompressFormat compressFormat = DEFAULT_COMPRESS_FORMAT;
+	/*图片压缩质量 已经赋值默认压缩质量*/
 	protected int compressQuality = DEFAULT_COMPRESS_QUALITY;
 
-	/** @param cacheDir Directory for file caching */
+	/**
+	 * 构造方法  缓存文件缓存的文件夹
+	 * @param cacheDir Directory for file caching
+	 */
 	public BaseDiskCache(File cacheDir) {
 		this(cacheDir, null);
 	}
 
 	/**
+	 * 构造方法   传入缓存文件夹 以及备用缓存文件夹
 	 * @param cacheDir        Directory for file caching
 	 * @param reserveCacheDir null-ok; Reserve directory for file caching. It's used when the primary directory isn't available.
 	 */
@@ -70,6 +87,7 @@ public abstract class BaseDiskCache implements DiskCache {
 	}
 
 	/**
+	 * 构造方法   传入缓存文件夹 以及备用缓存文件夹，缓存文件命名方式
 	 * @param cacheDir          Directory for file caching
 	 * @param reserveCacheDir   null-ok; Reserve directory for file caching. It's used when the primary directory isn't available.
 	 * @param fileNameGenerator {@linkplain com.nostra13.universalimageloader.cache.disc.naming.FileNameGenerator
@@ -88,16 +106,36 @@ public abstract class BaseDiskCache implements DiskCache {
 		this.fileNameGenerator = fileNameGenerator;
 	}
 
+	/**
+	 * 获取缓存文件夹
+	 * @return
+	 */
 	@Override
 	public File getDirectory() {
 		return cacheDir;
 	}
 
+	/**
+	 * 获取缓存文件
+	 * @param imageUri Original image URI
+	 * @return
+	 */
 	@Override
 	public File get(String imageUri) {
 		return getFile(imageUri);
 	}
 
+	/**
+	 * 根据文件流进行保存到缓存文件中
+	 * @param imageUri    Original image URI    原图片URL地址作为生成缓存文件的文件名
+	 * @param imageStream Input stream of image (shouldn't be closed in this method)   图片流
+	 * @param listener     用于监听流保存本地的进度
+	 * Listener for saving progress, can be ignored if you don't use
+	 *                    {@linkplain com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener
+	 *                    progress listener} in ImageLoader calls
+	 * @return
+	 * @throws IOException
+	 */
 	@Override
 	public boolean save(String imageUri, InputStream imageStream, IoUtils.CopyListener listener) throws IOException {
 		File imageFile = getFile(imageUri);
@@ -121,13 +159,24 @@ public abstract class BaseDiskCache implements DiskCache {
 		return loaded;
 	}
 
+	/**
+	 * 进行保存图片(bitmap)到缓存中 其中根据imageurl来生成缓存文件命名
+	 * @param imageUri Original image URI
+	 * @param bitmap   Image bitmap
+	 * @return
+	 * @throws IOException
+	 */
 	@Override
 	public boolean save(String imageUri, Bitmap bitmap) throws IOException {
+		//根据图片链接地址 生成本地文件
 		File imageFile = getFile(imageUri);
+		//生成临时文件
 		File tmpFile = new File(imageFile.getAbsolutePath() + TEMP_IMAGE_POSTFIX);
+		//写入文件
 		OutputStream os = new BufferedOutputStream(new FileOutputStream(tmpFile), bufferSize);
 		boolean savedSuccessfully = false;
 		try {
+			//进行图片压缩
 			savedSuccessfully = bitmap.compress(compressFormat, compressQuality, os);
 		} finally {
 			IoUtils.closeSilently(os);
@@ -142,6 +191,11 @@ public abstract class BaseDiskCache implements DiskCache {
 		return savedSuccessfully;
 	}
 
+	/**
+	 * 根据图片URL地址 进行删除指定的相关文件
+	 * @param imageUri Image URI
+	 * @return
+	 */
 	@Override
 	public boolean remove(String imageUri) {
 		return getFile(imageUri).delete();
@@ -152,6 +206,9 @@ public abstract class BaseDiskCache implements DiskCache {
 		// Nothing to do
 	}
 
+	/**
+	 * 进行清除缓存文件
+	 */
 	@Override
 	public void clear() {
 		File[] files = cacheDir.listFiles();
@@ -162,8 +219,12 @@ public abstract class BaseDiskCache implements DiskCache {
 		}
 	}
 
-	/** Returns file object (not null) for incoming image URI. File object can reference to non-existing file. */
+	/**
+	 * Returns file object (not null) for incoming image URI. File object can reference to non-existing file.
+	 * 创建缓存文件
+	 */
 	protected File getFile(String imageUri) {
+		//生成指定格式的文件名
 		String fileName = fileNameGenerator.generate(imageUri);
 		File dir = cacheDir;
 		if (!cacheDir.exists() && !cacheDir.mkdirs()) {
