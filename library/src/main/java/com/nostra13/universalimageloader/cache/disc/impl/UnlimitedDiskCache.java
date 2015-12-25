@@ -20,6 +20,7 @@ import com.nostra13.universalimageloader.cache.disc.naming.FileNameGenerator;
 import java.io.File;
 
 /**
+ * 默认无限制本地文件系统缓存(磁盘缓存)
  * Default implementation of {@linkplain com.nostra13.universalimageloader.cache.disc.DiskCache disk cache}.
  * Cache size is unlimited.
  *
@@ -33,17 +34,22 @@ public class UnlimitedDiskCache extends BaseDiskCache {
 	}
 
 	/**
-	 * @param cacheDir        Directory for file caching
-	 * @param reserveCacheDir null-ok; Reserve directory for file caching. It's used when the primary directory isn't available.
+	 * 构造器   无限制磁盘缓存器初始化
+	 * @param cacheDir         Directory for file caching    缓存文件夹
+	 * @param reserveCacheDir  备用缓存文件夹
+	 *                         null-ok; Reserve directory for file caching. It's used when the primary directory isn't available.
 	 */
 	public UnlimitedDiskCache(File cacheDir, File reserveCacheDir) {
 		super(cacheDir, reserveCacheDir);
 	}
 
 	/**
-	 * @param cacheDir          Directory for file caching
-	 * @param reserveCacheDir   null-ok; Reserve directory for file caching. It's used when the primary directory isn't available.
-	 * @param fileNameGenerator {@linkplain com.nostra13.universalimageloader.cache.disc.naming.FileNameGenerator
+	 * 构造器   无限制磁盘缓存器初始化
+	 * @param cacheDir          Directory for file caching 缓存文件夹
+	 * @param reserveCacheDir    备用缓存文件夹
+	 * null-ok; Reserve directory for file caching. It's used when the primary directory isn't available.
+	 * @param fileNameGenerator    缓存文件名生成器
+	 * {@linkplain com.nostra13.universalimageloader.cache.disc.naming.FileNameGenerator
 	 *                          Name generator} for cached files
 	 */
 	public UnlimitedDiskCache(File cacheDir, File reserveCacheDir, FileNameGenerator fileNameGenerator) {
