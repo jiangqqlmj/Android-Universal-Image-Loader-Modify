@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
+ * 本地文件系统(磁盘缓存) 相关操作接口
  * Interface for disk cache
  *
  * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)
@@ -30,6 +31,7 @@ import java.io.InputStream;
  */
 public interface DiskCache {
 	/**
+	 *
 	 * Returns root directory of disk cache
 	 *
 	 * @return Root directory of disk cache
@@ -37,6 +39,7 @@ public interface DiskCache {
 	File getDirectory();
 
 	/**
+	 * 根据图片地址从缓存中获取文件
 	 * Returns file of cached image
 	 *
 	 * @param imageUri Original image URI
@@ -45,6 +48,7 @@ public interface DiskCache {
 	File get(String imageUri);
 
 	/**
+	 * 进行保存图片流到缓存中
 	 * Saves image stream in disk cache.
 	 * Incoming image stream shouldn't be closed in this method.
 	 *
@@ -59,6 +63,7 @@ public interface DiskCache {
 	boolean save(String imageUri, InputStream imageStream, IoUtils.CopyListener listener) throws IOException;
 
 	/**
+	 * 进行保存图片 bitmap到缓存中
 	 * Saves image bitmap in disk cache.
 	 *
 	 * @param imageUri Original image URI
@@ -69,6 +74,7 @@ public interface DiskCache {
 	boolean save(String imageUri, Bitmap bitmap) throws IOException;
 
 	/**
+	 * 根据图片地址来从缓存中删除文件
 	 * Removes image file associated with incoming URI
 	 *
 	 * @param imageUri Image URI
@@ -77,9 +83,15 @@ public interface DiskCache {
 	 */
 	boolean remove(String imageUri);
 
-	/** Closes disk cache, releases resources. */
+	/**
+	 * Closes disk cache, releases resources.
+	 * 关闭缓存，释放资源
+	 */
 	void close();
 
-	/** Clears disk cache. */
+	/**
+	 * Clears disk cache.
+	 * 进行清除文件缓存
+	 */
 	void clear();
 }
