@@ -22,6 +22,7 @@ import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 
 /**
+ * 集成BaseMemoryCache抽象类，实现其中的crateReference抽象方法，来生成具体构建方法。这边吧bitamp包装成弱引用
  * Memory cache with {@linkplain WeakReference weak references} to {@linkplain android.graphics.Bitmap bitmaps}<br />
  * <br />
  * <b>NOTE:</b> This cache uses only weak references for stored Bitmaps.
