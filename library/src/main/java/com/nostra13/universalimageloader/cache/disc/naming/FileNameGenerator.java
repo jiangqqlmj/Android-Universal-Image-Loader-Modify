@@ -16,6 +16,7 @@
 package com.nostra13.universalimageloader.cache.disc.naming;
 
 /**
+ * 本地文件缓存(磁盘缓存) 文件命名规范接口
  * Generates names for files at disk cache
  *
  * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)
@@ -23,6 +24,9 @@ package com.nostra13.universalimageloader.cache.disc.naming;
  */
 public interface FileNameGenerator {
 
-	/** Generates unique file name for image defined by URI */
+	/**
+	 * Generates unique file name for image defined by URI
+	 * 根据图片地址来进行生成特定的文件名
+	 */
 	String generate(String imageUri);
 }

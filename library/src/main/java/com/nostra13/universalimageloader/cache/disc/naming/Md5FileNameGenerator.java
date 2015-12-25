@@ -40,6 +40,11 @@ public class Md5FileNameGenerator implements FileNameGenerator {
 		return bi.toString(RADIX);
 	}
 
+	/**
+	 * 获取MD5格式的文件
+	 * @param data
+	 * @return
+	 */
 	private byte[] getMD5(byte[] data) {
 		byte[] hash = null;
 		try {
