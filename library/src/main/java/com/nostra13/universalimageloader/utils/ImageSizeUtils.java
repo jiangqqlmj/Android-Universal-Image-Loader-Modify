@@ -37,6 +37,7 @@ public final class ImageSizeUtils {
 		int[] maxTextureSize = new int[1];
 		GLES10.glGetIntegerv(GL10.GL_MAX_TEXTURE_SIZE, maxTextureSize, 0);
 		int maxBitmapDimension = Math.max(maxTextureSize[0], DEFAULT_MAX_BITMAP_DIMENSION);
+		//初始化图像的最大尺寸大小
 		maxBitmapSize = new ImageSize(maxBitmapDimension, maxBitmapDimension);
 	}
 
@@ -44,6 +45,7 @@ public final class ImageSizeUtils {
 	}
 
 	/**
+	 * 给显示的控件定义目标大小
 	 * Defines target size for image aware view. Size is defined by target
 	 * {@link com.nostra13.universalimageloader.core.imageaware.ImageAware view} parameters, configuration
 	 * parameters or device display dimensions.<br />
@@ -59,6 +61,7 @@ public final class ImageSizeUtils {
 	}
 
 	/**
+	 * 计算缩放比例
 	 * Computes sample size for downscaling image size (<b>srcSize</b>) to view size (<b>targetSize</b>). This sample
 	 * size is used during
 	 * {@linkplain BitmapFactory#decodeStream(java.io.InputStream, android.graphics.Rect, android.graphics.BitmapFactory.Options)
