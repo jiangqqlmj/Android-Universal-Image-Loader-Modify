@@ -20,6 +20,7 @@ import com.nostra13.universalimageloader.cache.disc.DiskCache;
 import java.io.File;
 
 /**
+ * 操作本地文件系统缓存工具类
  * Utility for convenient work with disk cache.<br />
  * <b>NOTE:</b> This utility works with file system so avoid using it on application main thread.
  *
@@ -31,13 +32,17 @@ public final class DiskCacheUtils {
 	private DiskCacheUtils() {
 	}
 
-	/** Returns {@link File} of cached image or <b>null</b> if image was not cached in disk cache */
+	/**
+	 * Returns {@link File} of cached image or <b>null</b> if image was not cached in disk cache
+	 * 从文件缓存中根据图片链接地址获取缓存的文件
+	 */
 	public static File findInCache(String imageUri, DiskCache diskCache) {
 		File image = diskCache.get(imageUri);
 		return image != null && image.exists() ? image : null;
 	}
 
 	/**
+	 * 从文件缓存中根据图片链接地址删除缓存文件
 	 * Removed cached image file from disk cache (if image was cached in disk cache before)
 	 *
 	 * @return <b>true</b> - if cached image file existed and was deleted; <b>false</b> - otherwise.
