@@ -20,6 +20,7 @@ import android.graphics.Bitmap;
 import java.util.Collection;
 
 /**
+ * 内存缓存统一规范接口
  * Interface for memory cache
  *
  * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)
@@ -27,6 +28,7 @@ import java.util.Collection;
  */
 public interface MemoryCache {
 	/**
+	 * 通过key(bitmap)把value加入到缓存中
 	 * Puts value into cache by key
 	 *
 	 * @return <b>true</b> - if value was put into cache successfully, <b>false</b> - if value was <b>not</b> put into
@@ -34,15 +36,25 @@ public interface MemoryCache {
 	 */
 	boolean put(String key, Bitmap value);
 
-	/** Returns value by key. If there is no value for key then null will be returned. */
+	/**
+	 * Returns value by key. If there is no value for key then null will be returned.
+	 * 通过key，从缓存中获取图片
+	 */
 	Bitmap get(String key);
 
-	/** Removes item by key */
+	/** Removes item by key
+	 *  根据key,从缓存中删除图片
+	 */
 	Bitmap remove(String key);
 
-	/** Returns all keys of cache */
+	/**
+	 * Returns all keys of cache
+	 * 返回缓存中所有的key
+	 */
 	Collection<String> keys();
 
-	/** Remove all items from cache */
+	/** Remove all items from cache
+	 * 清除缓存中所有的数据
+	 */
 	void clear();
 }
