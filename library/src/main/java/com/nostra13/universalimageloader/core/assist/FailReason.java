@@ -16,15 +16,16 @@
 package com.nostra13.universalimageloader.core.assist;
 
 /**
+ * 封装提供图片加载或者显示失败原因
  * Presents the reason why image loading and displaying was failed
  *
  * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)
  * @since 1.0.0
  */
 public class FailReason {
-
+    /*失败原因*/
 	private final FailType type;
-
+    /*错误信息*/
 	private final Throwable cause;
 
 	public FailReason(FailType type, Throwable cause) {
@@ -42,7 +43,10 @@ public class FailReason {
 		return cause;
 	}
 
-	/** Presents type of fail while image loading */
+	/**
+	 * Presents type of fail while image loading
+	 * 图片加载失败原因 类型枚举
+	 */
 	public static enum FailType {
 		/** Input/output error. Can be caused by network communication fail or error while caching image on file system. */
 		IO_ERROR,

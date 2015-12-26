@@ -16,6 +16,7 @@
 package com.nostra13.universalimageloader.core.assist;
 
 /**
+ * 提供Image尺寸信息封装
  * Present width and height values
  *
  * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)
@@ -29,11 +30,22 @@ public class ImageSize {
 	private final int width;
 	private final int height;
 
+	/**
+	 * 构造方法
+	 * @param width    宽度
+	 * @param height   高度
+	 */
 	public ImageSize(int width, int height) {
 		this.width = width;
 		this.height = height;
 	}
 
+	/**
+	 * 构造方法      -传入旋转角度
+	 * @param width
+	 * @param height
+	 * @param rotation
+	 */
 	public ImageSize(int width, int height, int rotation) {
 		if (rotation % 180 == 0) {
 			this.width = width;
@@ -52,12 +64,18 @@ public class ImageSize {
 		return height;
 	}
 
-	/** Scales down dimensions in <b>sampleSize</b> times. Returns new object. */
+	/**
+	 * Scales down dimensions in <b>sampleSize</b> times. Returns new object.
+	 * 进行尺寸缩小
+	 */
 	public ImageSize scaleDown(int sampleSize) {
 		return new ImageSize(width / sampleSize, height / sampleSize);
 	}
 
-	/** Scales dimensions according to incoming scale. Returns new object. */
+	/**
+	 * Scales dimensions according to incoming scale. Returns new object.
+	 * 进行尺寸放大
+	 */
 	public ImageSize scale(float scale) {
 		return new ImageSize((int) (width * scale), (int) (height * scale));
 	}
