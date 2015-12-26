@@ -31,6 +31,11 @@ import java.lang.ref.WeakReference;
  * @since 1.5.3
  */
 public class WeakMemoryCache extends BaseMemoryCache {
+	/**
+	 * 进行bitmap包装成弱引用对象
+	 * @param value
+	 * @return
+	 */
 	@Override
 	protected Reference<Bitmap> createReference(Bitmap value) {
 		return new WeakReference<Bitmap>(value);

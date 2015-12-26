@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
+ * 实现MemoryCache接口，LRU算法内存缓存器
  * A cache that holds strong references to a limited number of Bitmaps. Each time a Bitmap is accessed, it is moved to
  * the head of a queue. When a Bitmap is added to a full cache, the Bitmap at the end of that queue is evicted and may
  * become eligible for garbage collection.<br />
@@ -20,14 +21,22 @@ import java.util.Map;
  * @since 1.8.1
  */
 public class LruMemoryCache implements MemoryCache {
-
+    /*bitmap对象保存集合 采用LinkedHashMap对象保存*/
 	private final LinkedHashMap<String, Bitmap> map;
-
+    /*内存缓存最大值*/
 	private final int maxSize;
-	/** Size of this cache in bytes */
+	/**
+	 * Size of this cache in bytes
+	 * 缓存字节数量大小
+	 */
 	private int size;
 
-	/** @param maxSize Maximum sum of the sizes of the Bitmaps in this cache */
+	/**
+	 * LRU内存缓存器构造器
+	 * @param maxSize   缓存中图片最大的尺寸
+	 * Maximum sum of the sizes of the Bitmaps in this cache
+	 *
+	 */
 	public LruMemoryCache(int maxSize) {
 		if (maxSize <= 0) {
 			throw new IllegalArgumentException("maxSize <= 0");
@@ -37,6 +46,7 @@ public class LruMemoryCache implements MemoryCache {
 	}
 
 	/**
+	 * 从缓存中获取相应的缓存图片
 	 * Returns the Bitmap for {@code key} if it exists in the cache. If a Bitmap was returned, it is moved to the head
 	 * of the queue. This returns null if a Bitmap is not cached.
 	 */
@@ -51,7 +61,10 @@ public class LruMemoryCache implements MemoryCache {
 		}
 	}
 
-	/** Caches {@code Bitmap} for {@code key}. The Bitmap is moved to the head of the queue. */
+	/**
+	 * Caches {@code Bitmap} for {@code key}. The Bitmap is moved to the head of the queue.
+	 * 根据key和图片  存入到缓存中，该被缓存的图片会移动到队列的头
+	 */
 	@Override
 	public final boolean put(String key, Bitmap value) {
 		if (key == null || value == null) {
@@ -71,6 +84,7 @@ public class LruMemoryCache implements MemoryCache {
 	}
 
 	/**
+	 * 进行移除最早的文件，来保证缓存大小在期望之内
 	 * Remove the eldest entries until the total of remaining entries is at or below the requested size.
 	 *
 	 * @param maxSize the maximum size of the cache before returning. May be -1 to evict even 0-sized elements.
@@ -100,7 +114,10 @@ public class LruMemoryCache implements MemoryCache {
 		}
 	}
 
-	/** Removes the entry for {@code key} if it exists. */
+	/**
+	 * Removes the entry for {@code key} if it exists.
+	 * 进行从缓存中移除缓存文件
+	 */
 	@Override
 	public final Bitmap remove(String key) {
 		if (key == null) {
@@ -129,6 +146,7 @@ public class LruMemoryCache implements MemoryCache {
 	}
 
 	/**
+	 * 进行计算图片大小
 	 * Returns the size {@code Bitmap} in bytes.
 	 * <p/>
 	 * An entry's size must not change while it is in the cache.
