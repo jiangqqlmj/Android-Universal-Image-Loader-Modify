@@ -27,6 +27,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 /**
+ * 有限制的缓存
  * Limited {@link Bitmap bitmap} cache. Provides {@link Bitmap bitmaps} storing. Size of all stored bitmaps will not to
  * exceed size limit. When cache reaches limit size then the bitmap which has the largest size is deleted from
  * cache.<br />
@@ -39,16 +40,28 @@ import java.util.Set;
  */
 public class LargestLimitedMemoryCache extends LimitedMemoryCache {
 	/**
+	 * 保存存储对象强引用集合，如果硬缓存大小超过限制，那么最大的缓存会被删除。
+	 * (但是该对象还是会存在软引用中，随时可能被GC回收)
 	 * Contains strong references to stored objects (keys) and sizes of the objects. If hard cache
 	 * size will exceed limit then object with the largest size is deleted (but it continue exist at
 	 * {@link #softMap} and can be collected by GC at any time)
 	 */
 	private final Map<Bitmap, Integer> valueSizes = Collections.synchronizedMap(new HashMap<Bitmap, Integer>());
 
+	/**
+	 * 构造器
+	 * @param sizeLimit
+	 */
 	public LargestLimitedMemoryCache(int sizeLimit) {
 		super(sizeLimit);
 	}
 
+	/**
+	 * 进行文件缓存
+	 * @param key
+	 * @param value
+	 * @return
+	 */
 	@Override
 	public boolean put(String key, Bitmap value) {
 		if (super.put(key, value)) {
@@ -59,6 +72,11 @@ public class LargestLimitedMemoryCache extends LimitedMemoryCache {
 		}
 	}
 
+	/**
+	 * 进行缓存文件删除
+	 * @param key
+	 * @return
+	 */
 	@Override
 	public Bitmap remove(String key) {
 		Bitmap value = super.get(key);
@@ -68,6 +86,9 @@ public class LargestLimitedMemoryCache extends LimitedMemoryCache {
 		return super.remove(key);
 	}
 
+	/**
+	 * 进行内存缓存数据清除
+	 */
 	@Override
 	public void clear() {
 		valueSizes.clear();
