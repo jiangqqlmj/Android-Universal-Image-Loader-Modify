@@ -48,22 +48,29 @@ public class FailReason {
 	 * 图片加载失败原因 类型枚举
 	 */
 	public static enum FailType {
-		/** Input/output error. Can be caused by network communication fail or error while caching image on file system. */
+		/**
+		 * IO流相关错误
+		 * Input/output error. Can be caused by network communication fail or error while caching image on file system. */
 		IO_ERROR,
 		/**
-		 * Error while
+		 * Error while  解码错误
 		 * {@linkplain android.graphics.BitmapFactory#decodeStream(java.io.InputStream, android.graphics.Rect, android.graphics.BitmapFactory.Options)
 		 * decode image to Bitmap}
 		 */
 		DECODING_ERROR,
 		/**
+		 * 网络被拒绝错误
 		 * {@linkplain com.nostra13.universalimageloader.core.ImageLoader#denyNetworkDownloads(boolean) Network
 		 * downloads are denied} and requested image wasn't cached in disk cache before.
 		 */
 		NETWORK_DENIED,
-		/** Not enough memory to create needed Bitmap for image */
+		/**
+		 * 内存溢出
+		 * Not enough memory to create needed Bitmap for image */
 		OUT_OF_MEMORY,
-		/** Unknown error was occurred while loading image */
+		/**
+		 * 不明错误
+		 * Unknown error was occurred while loading image */
 		UNKNOWN
 	}
 }

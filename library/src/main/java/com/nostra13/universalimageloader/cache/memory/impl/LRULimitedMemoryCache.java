@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 /**
+ *
  * Limited {@link Bitmap bitmap} cache. Provides {@link Bitmap bitmaps} storing. Size of all stored bitmaps will not to
  * exceed size limit. When cache reaches limit size then the least recently used bitmap is deleted from cache.<br />
  * <br />

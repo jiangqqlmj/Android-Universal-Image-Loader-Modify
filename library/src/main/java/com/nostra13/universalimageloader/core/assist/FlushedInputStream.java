@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
+ *
  * Many streams obtained over slow connection show <a href="http://code.google.com/p/android/issues/detail?id=6066">this
  * problem</a>.
  */
