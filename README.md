@@ -1,4 +1,4 @@
-本人维护的微信订阅号,欢迎大家微信关注一下!定期分享移动技术干活,项目管理和博客文章!</br>
+本人维护的微信订阅号,欢迎大家微信关注一下!定期分享移动技术干货(Android/IOS),Web前端,项目管理和博客文章!</br>
 <img src="http://img.blog.csdn.net/20151229084251042"/></br>
 #<a href="http://blog.csdn.net/developer_jiangqq">关于本人</a>
 邮箱:jiangqqlmj@163.com</br>
