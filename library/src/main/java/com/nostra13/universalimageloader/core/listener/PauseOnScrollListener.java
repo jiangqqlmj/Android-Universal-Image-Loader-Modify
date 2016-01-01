@@ -19,6 +19,7 @@ import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.GridView;
 import android.widget.ListView;
+
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 /**
@@ -35,11 +36,22 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 public class PauseOnScrollListener implements OnScrollListener {
 
 	private ImageLoader imageLoader;
-
+    //标记是否滚动时候暂停加载
 	private final boolean pauseOnScroll;
+	//标记是否fling的时候暂停加载
 	private final boolean pauseOnFling;
 	private final OnScrollListener externalListener;
 
+	//==============构造方法扩展========================
+
+	/**
+	 * 进行扩展构造方法，默认pauseOnScroll和pauseOnFling都为true，
+	 * 表示该两种情况下默认ImageLoader会去暂停加载
+	 * @param imageLoader
+	 */
+	public PauseOnScrollListener(ImageLoader imageLoader){
+		this(imageLoader,true,true,null);
+	}
 	/**
 	 * Constructor  构造方式
 	 *
@@ -78,14 +90,17 @@ public class PauseOnScrollListener implements OnScrollListener {
 	public void onScrollStateChanged(AbsListView view, int scrollState) {
 		switch (scrollState) {
 			case OnScrollListener.SCROLL_STATE_IDLE:
+				//恢复ImageLoader加载
 				imageLoader.resume();
 				break;
 			case OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
+				//判断标记,是否暂停ImageLoader加载
 				if (pauseOnScroll) {
 					imageLoader.pause();
 				}
 				break;
 			case OnScrollListener.SCROLL_STATE_FLING:
+				//判断标记,是否暂停ImageLoader加载
 				if (pauseOnFling) {
 					imageLoader.pause();
 				}
